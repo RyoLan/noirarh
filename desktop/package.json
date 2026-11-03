@@ -1,0 +1,71 @@
+{
+  "name": "noira-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Noira for Windows and macOS: runs the gateway on this computer and opens the panel in its own window.",
+  "author": "Noira",
+  "homepage": "https://github.com/noira-app/noira",
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "bundle": "vite build -c vite.config.ts && node scripts/copy-assets.mjs",
+    "start": "npm run bundle && electron .",
+    "dist": "npm run bundle && electron-builder --publish never",
+    "dist:win": "npm run bundle && electron-builder --win --publish never",
+    "dist:mac": "npm run bundle && electron-builder --mac --publish never"
+  },
+  "devDependencies": {
+    "electron": "45.2.1",
+    "electron-builder": "^26.18.0",
+    "noira": "0.1.0"
+  },
+  "build": {
+    "appId": "app.noira.desktop",
+    "productName": "Noira",
+    "copyright": "© 2026 Noira",
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "asar": true,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.png",
+      "artifactName": "Noira-Setup.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "Noira",
+      "createDesktopShortcut": true
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "universal"
+          ]
+        }
+      ],
+      "category": "public.app-category.productivity",
+      "icon": "build/icon.png",
+      "artifactName": "Noira-mac.${ext}"
+    },
+    "dmg": {
+      "title": "Noira"
+    }
+  }
+}

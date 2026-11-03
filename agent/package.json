@@ -1,0 +1,32 @@
+{
+  "name": "noira",
+  "version": "0.1.0",
+  "description": "Noira: a self-hosted AI agent. One gateway on your own machine, a CLI and a control panel. It asks before it acts.",
+  "type": "module",
+  "bin": {
+    "noira": "dist/cli.js"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./gateway": "./dist/gateway.js"
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && vite build -c panel/vite.config.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p panel/tsconfig.json",
+    "dev": "tsx src/cli.ts gateway",
+    "test": "tsx scripts/check.ts",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["ai", "agent", "self-hosted", "claude", "cli", "gateway", "noira"],
+  "license": "MIT",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.4.0",
+    "zod": "^4.6.7"
+  }
+}

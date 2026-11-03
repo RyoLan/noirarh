@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Noira · $NOIRA</title>
+<meta name="description" content="Noira is an AI agent that observes every Pons launch, collapses the noise into signal, answers questions about it, and vibe-codes sites from your terminal.">
+<meta name="theme-color" content="#030208">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2305030c'/%3E%3Cpath d='M41 9a23 23 0 1 0 14 35.2A19.2 19.2 0 0 1 41 9z' fill='%23dccfff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@400;500;600&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
+</head>
+<body>
+
+<!-- ============ PRELOADER ============ -->
+<div class="loader" id="loader" aria-hidden="true">
+  <div class="loader-mark">
+    <svg viewBox="0 0 32 32"><path d="M20.5 4.5a11.5 11.5 0 1 0 7 17.6A9.6 9.6 0 0 1 20.5 4.5z" fill="currentColor"/></svg>
+    <span>Noira</span>
+  </div>
+  <div class="loader-bar"><i id="loaderBar"></i></div>
+  <div class="loader-num"><span id="loaderNum">00</span>%</div>
+  <p class="loader-line" id="loaderLine">Calibrating the field</p>
+</div>
+
+<canvas id="scene" aria-hidden="true"></canvas>
+<div class="sky-fallback" aria-hidden="true"><div class="fb-planet"></div><div class="fb-flame"></div></div>
+
+<div class="cursor" aria-hidden="true"><div class="cursor-dot"></div><div class="cursor-ring"><span class="cursor-label">Spin</span></div></div>
+
+<!-- ============ NAV ============ -->
+<header class="nav" id="nav">
+  <nav class="nav-left" aria-label="Primary">
+    <button class="nav-toggle" aria-expanded="false" aria-controls="navLinks" aria-label="Open menu"><span></span><span></span></button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#top" class="is-home"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M2 7.2 8 2l6 5.2V14H10V10H6v4H2z" fill="currentColor"/></svg>Home</a></li>
+      <li><a href="#download">Download</a></li>
+      <li><a href="#scanner">Scanner</a></li>
+      <li><a href="#detectors">Detectors</a></li>
+      <li><a href="#vibecode">Vibecode</a></li>
+      <li><a href="#token">$NOIRA</a></li>
+    </ul>
+  </nav>
+
+  <a class="brand" href="#top" aria-label="Noira home">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M20.5 4.5a11.5 11.5 0 1 0 7 17.6A9.6 9.6 0 0 1 20.5 4.5z" fill="currentColor"/></svg>
+    <span>Noira</span>
+  </a>
+
+  <div class="nav-right">
+    <span class="agent-pill" id="agentPill" title="Agent status"><i></i><span>Agent</span></span>
+    <a class="btn btn-light magnetic" href="#token"><span>Buy<span class="btn-txt-long"> $NOIRA</span></span> <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M3 9 9 3M4 3h5v5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></a>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top">
+  <div class="hero-frame" id="heroFrame">
+    <div class="hero-copy">
+      <p class="hero-chip">
+        <span class="chip-orb" aria-hidden="true"></span>
+        <span class="chip-text">Precision. Speed. Intelligence.</span>
+      </p>
+
+      <h1 class="wordmark" aria-label="Noira — the AI launch agent">
+        <span class="wm" aria-hidden="true" id="wordmark">NOIRA</span>
+      </h1>
+      <p class="tagline" id="tagline">Stop guessing — start scanning</p>
+      <p class="lede" id="lede">A self-hosted AI agent for your own machine. It watches every Pons launch, works while you sleep, and asks before it acts.</p>
+
+      <div class="hero-actions">
+        <div class="install">
+          <span class="install-prompt" aria-hidden="true">$</span>
+          <code class="npm-cmd">npm install -g noira</code>
+          <button class="copy npm-copy" data-copy="npm install -g noira" aria-label="Copy install command"><span class="lbl">Copy</span></button>
+        </div>
+        <div class="cta-row">
+          <a class="btn btn-violet magnetic" id="heroDownload" href="#download">Download Noira <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 2v7M3 6l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></a>
+          <a class="btn btn-ghost magnetic" href="#download">All platforms</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="hud hud-left" aria-hidden="true">
+      <span class="hud-dot"></span>
+      <span>State <b id="hudState">observing</b></span>
+    </div>
+    <div class="hud hud-right" aria-hidden="true">
+      <span>Observed <b id="hudObserved">0000</b></span>
+      <span>Crystals <b id="hudCrystals">0</b></span>
+    </div>
+
+    <a class="scroll-cue" href="#scanner" aria-label="Scroll to scanner">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ============ LIVE TICKER ============ -->
+<div class="ticker" aria-label="Latest launches">
+  <div class="ticker-track" id="tickerTrack"></div>
+</div>
+
+<!-- ============ DOWNLOAD ============ -->
+<section class="section" id="download">
+  <div class="sec-head">
+    <p class="kicker" data-scramble>Get the agent</p>
+    <h2 data-split>Install it once. Let it work the night.</h2>
+    <p class="sec-lede" data-rise>Noira runs on a machine you control. Windows and macOS run the gateway for you; Android and the web app connect to one you already run. The phone never runs the agent itself.</p>
+  </div>
+
+  <div class="dl-grid">
+    <article class="panel dl-card tilt" data-rise data-os="windows">
+      <span class="tk-k">Installer · .exe</span>
+      <h3>Windows</h3>
+      <p>Windows 10 or newer. Starts the gateway and opens the panel in its own window, then keeps working from the tray.</p>
+      <a class="btn btn-light dl-btn" data-asset="Noira-Setup.exe" href="#download">Download for Windows <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 2v7M3 6l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></a>
+    </article>
+    <article class="panel dl-card tilt" data-rise data-os="mac">
+      <span class="tk-k">Disk image · .dmg</span>
+      <h3>macOS</h3>
+      <p>Apple silicon and Intel. Lives in the menu bar and keeps working when the window is closed.</p>
+      <a class="btn btn-light dl-btn" data-asset="Noira-mac.dmg" href="#download">Download for macOS <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 2v7M3 6l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></a>
+    </article>
+    <article class="panel dl-card tilt" data-rise data-os="android">
+      <span class="tk-k">Package · .apk</span>
+      <h3>Android</h3>
+      <p>A client for a gateway you run at home or on a server, over a private network such as Tailscale.</p>
+      <a class="btn btn-light dl-btn" data-asset="Noira-android.apk" href="#download">Download for Android <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 2v7M3 6l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></a>
+    </article>
+    <article class="panel dl-card wide" data-rise>
+      <span class="tk-k">Web app</span>
+      <h3>Install from the browser</h3>
+      <p>Open your own gateway at <code class="inline">127.0.0.1:18790/panel.html</code> and choose <b>Install app</b>. Same panel, no download, on any phone or desktop that can reach your gateway.</p>
+    </article>
+    <article class="panel dl-card wide" data-rise>
+      <span class="tk-k">Terminal</span>
+      <h3>npm</h3>
+      <p>One package gives you the gateway, the CLI and the control panel on Windows, macOS and Linux.</p>
+      <div class="install dl-install">
+        <span class="install-prompt" aria-hidden="true">$</span>
+        <code class="npm-cmd">npm install -g noira</code>
+        <button class="copy npm-copy" data-copy="npm install -g noira" aria-label="Copy install command"><span class="lbl">Copy</span></button>
+      </div>
+    </article>
+  </div>
+
+  <div class="panel start" data-rise>
+    <div class="start-head">
+      <h3>Get started</h3>
+      <div class="os-tabs" role="tablist" aria-label="Operating system">
+        <button role="tab" data-shell="win" aria-selected="false">Windows (PowerShell)</button>
+        <button role="tab" data-shell="unix" aria-selected="true">macOS &amp; Linux</button>
+      </div>
+    </div>
+    <pre class="start-code"><code id="startCode">npm install -g noira
+noira onboard        # pick Claude, an OpenAI-compatible model or Ollama
+noira start          # the gateway, in the background
+noira                # chat with it · noira panel opens the control panel</code></pre>
+    <div class="start-foot">
+      <p class="start-note">Needs Node 22 or newer, plus a Claude or OpenAI-compatible key, or a local model with Ollama. Keys, memory and files stay in <code class="inline">~/.noira</code>.</p>
+      <button class="copy" id="startCopy" data-copy="" aria-label="Copy the commands"><span class="lbl">Copy</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SCANNER ============ -->
+<section class="section" id="scanner">
+  <div class="sec-head">
+    <p class="kicker" data-scramble>01 · Into the dark</p>
+    <h2 data-split>Every launch is noise until it’s observed.</h2>
+    <p class="sec-lede" data-rise>The moment a Pons launch goes live it enters the field. Noira takes seven measurements a careful trader would make, in seconds. Pass all seven and the state collapses to <em>signal</em>.</p>
+  </div>
+
+  <div class="scan-grid">
+    <article class="scan panel" data-rise aria-labelledby="scanTitle">
+      <header class="scan-head">
+        <h3 id="scanTitle"><span class="live-dot" aria-hidden="true"></span>Incoming launch</h3>
+        <span class="demo-tag" id="feedSource">Connecting…</span>
+      </header>
+
+      <div class="scan-token">
+        <div class="token-orb" id="scanOrb" aria-hidden="true">?</div>
+        <div class="token-id">
+          <div class="token-name" id="scanName">—</div>
+          <div class="token-sub"><span id="scanAddr">0x····</span> · <span id="scanAge">age —</span> · <span id="scanMcap">mcap $—</span></div>
+        </div>
+        <div class="score-ring" aria-live="polite">
+          <svg viewBox="0 0 64 64" aria-hidden="true"><circle class="track" cx="32" cy="32" r="26"/><circle class="prog" id="scanRing" cx="32" cy="32" r="26"/></svg>
+          <span id="scanScore">0/7</span>
+        </div>
+      </div>
+
+      <ol class="checks" id="scanChecks">
+        <li><span class="c-name">Dev wallet share</span><span class="c-val">···</span></li>
+        <li><span class="c-name">Liquidity lock</span><span class="c-val">···</span></li>
+        <li><span class="c-name">Holder concentration</span><span class="c-val">···</span></li>
+        <li><span class="c-name">Sniper / bundle activity</span><span class="c-val">···</span></li>
+        <li><span class="c-name">Contract risk</span><span class="c-val">···</span></li>
+        <li><span class="c-name">Early volume quality</span><span class="c-val">···</span></li>
+        <li><span class="c-name">Socials &amp; metadata</span><span class="c-val">···</span></li>
+      </ol>
+
+      <footer class="scan-foot">
+        <div class="verdict" id="scanVerdict" aria-live="polite">Waiting for the feed…</div>
+        <button class="btn btn-ghost sm" id="scanAsk">Ask about it</button>
+      </footer>
+    </article>
+
+    <aside class="scan-side">
+      <div class="panel collapse-log" data-rise>
+        <h3>Collapsed in the feed</h3>
+        <ul id="scanLog" class="log"><li class="log-empty">Waiting for the first measurement…</li></ul>
+      </div>
+      <div class="panel ratio" data-rise>
+        <div class="ratio-num"><b id="ratioSignal">0</b><span>signal</span></div>
+        <div class="ratio-bar" aria-hidden="true"><i id="ratioFill"></i></div>
+        <div class="ratio-num right"><b id="ratioNoise">0</b><span>noise</span></div>
+        <p class="ratio-note">Most launches never make it out. That’s the point.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ DETECTORS ============ -->
+<section class="section" id="detectors">
+  <div class="sec-head split">
+    <div>
+      <p class="kicker" data-scramble>02 · Detectors</p>
+      <h2 data-split>Six instruments. One dark sky.</h2>
+    </div>
+    <p class="sec-lede" data-rise>Everything the agent measures, you can measure too. Ask in plain words, or open each detector yourself.</p>
+  </div>
+
+  <div class="det">
+    <div class="det-list" role="tablist" aria-label="Detectors" data-rise>
+      <button class="det-item" role="tab" aria-selected="true" aria-controls="detView" data-mode="scanner">
+        <span class="det-n">01</span><span class="det-txt"><strong>Launch Scanner</strong><em>Every new launch, scored on all seven checks the second it lands.</em></span><span class="det-open" aria-hidden="true">↗</span>
+      </button>
+      <button class="det-item" role="tab" aria-selected="false" aria-controls="detView" data-mode="xray">
+        <span class="det-n">02</span><span class="det-txt"><strong>Wallet X-Ray</strong><em>The latest deployer, opened up: where its money came from and who it moves with.</em></span><span class="det-open" aria-hidden="true">↗</span>
+      </button>
+      <button class="det-item" role="tab" aria-selected="false" aria-controls="detView" data-mode="entangle">
+        <span class="det-n">03</span><span class="det-txt"><strong>Entanglement Map</strong><em>Supply drawn as mass. Linked wallets orbit together where you can see them.</em></span><span class="det-open" aria-hidden="true">↗</span>
+      </button>
+      <button class="det-item" role="tab" aria-selected="false" aria-controls="detView" data-mode="radar">
+        <span class="det-n">04</span><span class="det-txt"><strong>Sniper Radar</strong><em>Same-block buys, bundles and fresh wallets, caught before they catch you.</em></span><span class="det-open" aria-hidden="true">↗</span>
+      </button>
+      <button class="det-item" role="tab" aria-selected="false" aria-controls="detView" data-mode="pulse">
+        <span class="det-n">05</span><span class="det-txt"><strong>Liquidity Pulse</strong><em>Curve progress, LP moves and locks, read as one steady heartbeat.</em></span><span class="det-open" aria-hidden="true">↗</span>
+      </button>
+      <button class="det-item" role="tab" aria-selected="false" aria-controls="detView" data-mode="ask">
+        <span class="det-n">06</span><span class="det-txt"><strong>Ask Noira</strong><em>The agent itself. Ask anything in plain words: “Which launches today had no snipers?”</em></span><span class="det-open" aria-hidden="true">↗</span>
+      </button>
+    </div>
+
+    <div class="det-view panel" id="detView" role="tabpanel" data-rise>
+      <div class="det-view-head">
+        <h3 id="detTitle">Launch Scanner</h3>
+        <span class="demo-tag" id="detTag">Live feed</span>
+      </div>
+      <div class="det-stage">
+        <canvas id="detCanvas" aria-label="Detector visualisation" role="img"></canvas>
+        <div class="ask" id="ask" hidden>
+          <div class="ask-thread" id="askThread" aria-live="polite">
+            <div class="msg bot">I read launches, wallets and holders from the feed. Ask me something, or tap a question below.</div>
+          </div>
+          <div class="ask-sugg">
+            <button type="button" data-q="Which launches today had no snipers?">No snipers today?</button>
+            <button type="button" data-q="Which launches have locked liquidity and still failed? Why?">Locked but failed?</button>
+            <button type="button" data-q="Inspect the deployer of the latest launch.">Latest deployer?</button>
+          </div>
+          <form class="ask-form" id="askForm">
+            <label class="sr-only" for="askInput">Ask Noira</label>
+            <input id="askInput" autocomplete="off" maxlength="600" placeholder="Ask the field anything…">
+            <button class="btn btn-violet sm" type="submit" id="askBtn">Ask</button>
+          </form>
+        </div>
+      </div>
+      <p class="det-caption" id="detCaption">Rows land as launches go live; seven dots per row, one per check.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ VIBECODE ============ -->
+<section class="section" id="vibecode">
+  <div class="sec-head">
+    <p class="kicker" data-scramble>03 · Vibecode</p>
+    <h2 data-split>Say it once. Watch it build.</h2>
+    <p class="sec-lede" data-rise>Describe a launch page, a dApp front end or a tool in one sentence. The agent writes it while you watch, in the browser or straight into your own folder with the CLI.</p>
+  </div>
+
+  <div class="vibe">
+    <ol class="vibe-steps">
+      <li class="panel" data-rise>
+        <span class="step-n">01</span>
+        <h3>Try it in the browser</h3>
+        <p>3 free builds a day. Preview it, read the code, take the file.</p>
+      </li>
+      <li class="panel" data-rise>
+        <span class="step-n">02</span>
+        <h3>Sign once, keep building</h3>
+        <p>One signature proves you hold $NOIRA. No transaction, no gas — just a key for the CLI.</p>
+      </li>
+      <li class="panel" data-rise>
+        <span class="step-n">03</span>
+        <h3>Build from your terminal</h3>
+        <p><code class="inline">noira build "a site for…"</code> and the files land in your folder.</p>
+      </li>
+    </ol>
+
+    <div class="builder panel" data-rise>
+      <form class="vibe-form" id="vibeForm">
+        <label class="sr-only" for="vibePrompt">Describe what to build</label>
+        <span class="vibe-caret" aria-hidden="true">›</span>
+        <input id="vibePrompt" autocomplete="off" maxlength="400" placeholder="a launch page for my frog coin with a countdown">
+        <button class="btn btn-violet magnetic" id="vibeBtn" type="submit"><span class="vibe-btn-txt">Build</span> <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M3 9 9 3M4 3h5v5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></button>
+      </form>
+      <div class="vibe-sugg" aria-label="Example prompts">
+        <button type="button">a launch page for my frog coin with a countdown</button>
+        <button type="button">a staking dashboard for a dragon token</button>
+        <button type="button">an ocean themed meme coin site called "Tidal"</button>
+      </div>
+
+      <div class="win">
+        <div class="win-bar">
+          <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="win-path" id="winPath">~/my-launch</span>
+          <div class="win-tabs" role="tablist" aria-label="Output view">
+            <button role="tab" aria-selected="true" data-tab="preview">Preview</button>
+            <button role="tab" aria-selected="false" data-tab="code">Code</button>
+          </div>
+          <button class="win-dl" id="vibeDl" disabled>Download</button>
+        </div>
+        <div class="win-body">
+          <div class="win-empty" id="winEmpty">
+            <div class="empty-orb" aria-hidden="true"></div>
+            <p>Describe something above and press <b>Build</b>.</p>
+          </div>
+          <div class="win-think" id="vibeThink" hidden><span class="think-orb" aria-hidden="true"></span><p id="vibeThinkText">Planning…</p></div>
+          <iframe id="vibePreview" title="Generated site preview" sandbox="allow-scripts" hidden></iframe>
+          <pre class="win-code" id="vibeCode" hidden><code></code></pre>
+        </div>
+      </div>
+      <p class="vibe-quota" id="vibeQuotaLine"><b id="vibeQuota">3</b> free builds left today · holders build without limits</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TOKEN ============ -->
+<section class="section" id="token">
+  <div class="sec-head">
+    <p class="kicker" data-scramble>04 · $NOIRA</p>
+    <h2 data-split>Hold the token. Unlock the field.</h2>
+    <p class="sec-lede" data-rise>$NOIRA opens the whole agent. Everything it earns falls back into the token.</p>
+  </div>
+
+  <div class="token-grid">
+    <div class="panel ca-card" data-rise>
+      <div class="ca-row">
+        <span class="ca-label">CA</span>
+        <code class="ca-val" id="caVal">Coming soon</code>
+        <button class="copy" id="caCopy" data-copy="" disabled aria-label="Copy contract address"><span class="lbl">Copy</span></button>
+      </div>
+      <a class="btn btn-light" id="buyLink" href="#token" aria-disabled="true">Buy on Pons <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M3 9 9 3M4 3h5v5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></a>
+    </div>
+
+    <article class="panel tk tk-access tilt" data-rise>
+      <span class="tk-k">Access</span>
+      <b class="tk-big"><span id="accessNum">0.1</span>%</b>
+      <h3>Hold it. Open everything.</h3>
+      <p>Connect a wallet holding 0.1% of supply and every detector opens. Everyone else gets 3 free builds a day.</p>
+    </article>
+
+    <article class="panel tk tk-burn tilt" data-rise>
+      <span class="tk-k">Buyback &amp; burn</span>
+      <div class="burn-vis" aria-hidden="true"><i></i><i></i><i></i></div>
+      <h3>Every fee feeds the singularity.</h3>
+      <p>Fees buy $NOIRA off the curve and send it straight to the dead address in one transaction. Every burn is posted with its tx.</p>
+    </article>
+
+    <article class="panel tk tk-orbit tilt" data-rise>
+      <span class="tk-k">Top orbit</span>
+      <div class="orbit-vis" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <h3>The 5 heaviest wallets get paid.</h3>
+      <p>A share of fees goes to the 5 largest holders, sent by hand and posted with the transactions.</p>
+    </article>
+
+    <div class="panel burned" data-rise>
+      <span class="tk-k">Burned so far</span>
+      <b class="burned-num"><span id="burnedNum">0</span> <small>$NOIRA</small></b>
+      <span class="burned-note">Live at launch</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CTA ============ -->
+<section class="final" id="open">
+  <p class="kicker center" data-scramble>The field is open</p>
+  <h2 class="final-h" id="finalH">Let the noise collapse.<br>Keep what’s real.</h2>
+  <div class="cta-row center" data-rise>
+    <a class="btn btn-violet magnetic" href="#scanner">Enter Noira <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M3 9 9 3M4 3h5v5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></a>
+    <a class="btn btn-ghost magnetic" href="#vibecode">Vibecode with it</a>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="foot-row">
+    <span class="foot-brand">Noira · $NOIRA</span>
+    <nav class="foot-links" aria-label="Footer">
+      <a href="#download">Download</a>
+      <a href="#scanner">Scanner</a>
+      <a href="#detectors">Detectors</a>
+      <a href="#vibecode">Vibecode</a>
+      <a href="#token">Token</a>
+    </nav>
+  </div>
+  <div class="foot-mark" aria-hidden="true">NOIRA</div>
+  <p class="foot-note">Noira reads public chain data and is not financial advice. Do your own research. Until the chain indexer is connected the launch feed is simulated; the agent and builder run on Claude.</p>
+</footer>
+
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

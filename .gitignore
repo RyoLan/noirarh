@@ -1,0 +1,10 @@
+node_modules
+dist
+dist-node
+.env
+.taste-skill
+desktop/dist
+desktop/release
+mobile/www
+mobile/android
+agent/dist

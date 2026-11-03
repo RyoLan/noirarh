@@ -1,0 +1,13 @@
+{
+  "appId": "app.noira.mobile",
+  "appName": "Noira",
+  "webDir": "www",
+  "backgroundColor": "#07040f",
+  "server": {
+    "androidScheme": "http",
+    "cleartext": true
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Noira · Control panel</title>
+<meta name="description" content="Your self-hosted Noira agent: chat, approvals, jobs, memory and settings.">
+<meta name="theme-color" content="#07040f">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<!--NOIRA_BOOT-->
+</head>
+<body>
+<div id="app">
+  <aside class="side">
+    <div class="logo">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M20.5 4.5a11.5 11.5 0 1 0 7 17.6A9.6 9.6 0 0 1 20.5 4.5z" fill="currentColor"/></svg>
+      <span>Noira</span>
+    </div>
+    <nav class="tabs" aria-label="Panel">
+      <button data-view="chat" aria-current="page"><span class="ic">◐</span><span>Chat</span></button>
+      <button data-view="approvals"><span class="ic">✓</span><span>Approvals</span><b class="badge" id="apBadge" hidden>0</b></button>
+      <button data-view="activity"><span class="ic">≋</span><span>Activity</span></button>
+      <button data-view="jobs"><span class="ic">◷</span><span>Jobs</span></button>
+      <button data-view="memory"><span class="ic">◈</span><span>Memory</span></button>
+      <button data-view="files"><span class="ic">▤</span><span>Files</span></button>
+      <button data-view="settings"><span class="ic">⚙</span><span>Settings</span></button>
+    </nav>
+    <div class="side-foot">
+      <div class="gw" id="gwState"><i></i><span>Connecting…</span></div>
+      <button class="install" id="installBtn" hidden>Install app</button>
+    </div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+<script type="module" src="./src/main.ts"></script>
+</body>
+</html>

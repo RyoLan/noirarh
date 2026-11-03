@@ -1,0 +1,134 @@
+name: Release
+
+# Push a tag such as v0.1.0 to build every installer and attach them to a GitHub Release.
+# Optional secrets: NPM_TOKEN (publish the CLI to npm), CSC_LINK + CSC_KEY_PASSWORD (code signing),
+# APPLE_ID + APPLE_APP_SPECIFIC_PASSWORD + APPLE_TEAM_ID (macOS notarization).
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  agent:
+    name: npm package
+    runs-on: ubuntu-latest
+    env:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - run: npm run build -w agent
+      - run: npm test -w agent
+      - run: npm pack -w agent --pack-destination out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: npm
+          path: out/*.tgz
+      - name: Publish to npm
+        if: startsWith(github.ref, 'refs/tags/') && env.NPM_TOKEN != ''
+        run: npm publish -w agent --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  windows:
+    name: Windows installer
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w agent
+      - run: npm run dist:win -w desktop
+        env:
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: desktop/release/Noira-Setup.exe
+
+  macos:
+    name: macOS disk image
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build -w agent
+      - run: npm run dist:mac -w desktop
+        env:
+          # without a certificate the app is built unsigned instead of failing
+          CSC_IDENTITY_AUTO_DISCOVERY: ${{ secrets.CSC_LINK != '' }}
+          CSC_LINK: ${{ secrets.CSC_LINK }}
+          CSC_KEY_PASSWORD: ${{ secrets.CSC_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLE_APP_SPECIFIC_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos
+          path: desktop/release/Noira-mac.dmg
+
+  android:
+    name: Android app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - run: npm ci
+      - run: npm run build -w agent
+      - run: npm run add -w mobile
+      - name: App icons
+        run: npm run icons -w mobile
+        continue-on-error: true
+      - name: Build the APK
+        working-directory: mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+          cp app/build/outputs/apk/debug/app-debug.apk ../../Noira-android.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: android
+          path: Noira-android.apk
+
+  release:
+    name: GitHub Release
+    needs: [agent, windows, macos, android]
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            artifacts/Noira-Setup.exe
+            artifacts/Noira-mac.dmg
+            artifacts/Noira-android.apk
+            artifacts/*.tgz
+          generate_release_notes: true
