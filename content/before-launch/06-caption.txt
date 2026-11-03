@@ -1,0 +1,10 @@
+No dashboards to decode.
+
+Ask Noira in plain words:
+“Which launches today had no snipers?”
+“Latest deployer?”
+“Locked but failed?”
+
+It reads launches, wallets and holders, and answers.
+
+$NOIRA

@@ -1,0 +1,13 @@
+What Noira checks on every launch:
+
+▪️ Dev wallet share
+▪️ Liquidity lock
+▪️ Holder concentration
+▪️ Sniper / bundle activity
+▪️ Contract risk
+▪️ Early volume quality
+▪️ Socials metadata
+
+Seven checks. One verdict.
+
+$NOIRA

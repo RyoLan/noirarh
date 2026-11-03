@@ -1,0 +1,7 @@
+Meet Noira.
+
+A self-hosted AI agent that watches every Pons launch, works while you sleep, and asks before it acts.
+
+Stop guessing. Start scanning.
+
+$NOIRA

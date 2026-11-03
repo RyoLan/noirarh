@@ -1,0 +1,11 @@
+Noira runs where you do:
+
+🪟 Windows
+🍎 macOS
+🤖 Android (connects to your gateway)
+🌐 Web app
+⌨️ npm on Windows, macOS and Linux
+
+Install once. Let it work the night.
+
+noirarh.xyz

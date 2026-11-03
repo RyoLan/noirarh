@@ -1,0 +1,6 @@
+Noira isn’t a website you log into. It runs on a machine you control.
+
+Keys, memory and files stay in ~/.noira.
+Bring Claude, any OpenAI-compatible model, or run it locally with Ollama.
+
+$NOIRA

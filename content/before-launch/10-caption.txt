@@ -1,0 +1,7 @@
+Noira works while you sleep.
+
+But it’s an agent, not an autopilot: it waits for your yes before it acts.
+
+You stay in control. It does the watching.
+
+$NOIRA

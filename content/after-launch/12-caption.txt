@@ -1,0 +1,7 @@
+Set it and sleep.
+
+Put Noira on a schedule and wake up to a brief of the night’s launches: scanned, sorted, waiting for you.
+
+It still asks before it acts.
+
+$NOIRA

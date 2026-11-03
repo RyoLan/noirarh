@@ -1,0 +1,10 @@
+How the $NOIRA burn works:
+
+1. Fees buy $NOIRA off the curve
+2. Sent straight to the dead address
+3. In the same transaction
+4. Posted here with the tx
+
+Check it on-chain.
+
+NFA · DYOR

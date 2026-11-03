@@ -1,0 +1,9 @@
+Run your own Noira:
+
+npm install -g @noirarh/noira
+noira onboard
+noira start
+
+Then type `noira` to chat, or `noira panel` for the control panel.
+
+noirarh.xyz/docs

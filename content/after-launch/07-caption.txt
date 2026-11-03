@@ -1,0 +1,5 @@
+Prefer an installer?
+
+Windows (.exe) and macOS (.dmg) run the gateway for you from the tray or menu bar. Android connects to the gateway you run.
+
+noirarh.xyz

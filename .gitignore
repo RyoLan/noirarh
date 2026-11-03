@@ -9,3 +9,7 @@ mobile/www
 mobile/android
 agent/dist
 downloads
+
+# rendered X posts (scripts/content/make-content.mjs); captions stay in git
+content/**/*.png
+content/**/*.mp4

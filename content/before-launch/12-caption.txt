@@ -1,0 +1,10 @@
+Four commands:
+
+npm install -g @noirarh/noira
+noira onboard
+noira start
+noira
+
+Needs Node 22+. Full guide at noirarh.xyz/docs
+
+$NOIRA
