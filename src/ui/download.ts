@@ -1,7 +1,7 @@
 import { $, $$ } from './dom';
 
 /** "owner/repo" on GitHub whose Releases hold the installers built by .github/workflows/release.yml. */
-export const GITHUB_REPO = '';
+export const GITHUB_REPO = 'RyoLan/noirarh';
 
 type Os = 'windows' | 'mac' | 'android' | 'linux';
 

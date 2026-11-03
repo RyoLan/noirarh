@@ -36,7 +36,7 @@ smoothScroll(ticker);
 const scanner = new Scanner();
 const detectors = new Detectors(scanner);
 const ask = new Ask();
-const vibe = new Vibe();
+new Vibe();
 
 scanner.on('launch', l => ticker.push(l));
 scanner.on('signal', () => scene.ok && scene.pulse());
@@ -59,13 +59,11 @@ void getStatus().then(s => {
     pill.classList.add('offline');
     pill.querySelector('span')!.textContent = 'Agent: add API key';
     pill.title = 'Set ANTHROPIC_API_KEY in .env on the server and restart it';
-    vibe.setQuota(s.buildsLeft);
     return;
   }
   pill.classList.add('online');
   pill.querySelector('span')!.textContent = 'Agent ready';
-  pill.title = `Ask Noira and the builder run on ${s.model}`;
-  vibe.setQuota(s.buildsLeft);
+  pill.title = `Ask Noira runs on ${s.model}`;
 });
 
 /* ------------------------------------------------------------------ nav */

@@ -2,7 +2,7 @@
 
 This repository holds two things that share one brand:
 
-1. **The website** (root): the landing page with the 3D hero, the live launch scanner, Ask Noira and the web vibecode builder, plus the Download section.
+1. **The website** (root): the landing page with the 3D hero, the live launch scanner, Ask Noira, a Vibecode terminal replay, the Download section and the docs at /docs.
 2. **The Noira agent** (`agent/`, published to npm as `@noirarh/noira`): a self-hosted AI agent with a local gateway, a CLI and a control panel, packaged for Windows (`desktop/`), macOS (`desktop/`) and Android (`mobile/`).
 
 ```
@@ -23,7 +23,7 @@ npm run dev                 # http://localhost:5173
 npm run build && npm start  # production: node dist-node/server/index.js --prod
 ```
 
-Set `GITHUB_REPO` in `src/ui/download.ts` to your `owner/repo` so the download buttons point at the latest release. Until then they read "Coming soon". Contract address and buy link: `CONTRACT_ADDRESS` / `BUY_URL` in `src/main.ts`.
+The download buttons point at the latest release of `RyoLan/noirarh` (`GITHUB_REPO` in `src/ui/download.ts`). Contract address and buy link: `CONTRACT_ADDRESS` / `BUY_URL` in `src/main.ts`.
 
 ## Agent
 
@@ -49,7 +49,7 @@ npm run apk -w mobile             # needs JDK 21 and the Android SDK
 
 ## Releasing
 
-1. Push this repository to GitHub.
+1. The repository lives at https://github.com/RyoLan/noirarh.
 2. Bump `version` in `agent/`, `desktop/` and `mobile/package.json`, then push a tag: `git tag v0.1.0 && git push --tags`.
 3. `.github/workflows/release.yml` builds `Noira-Setup.exe`, `Noira-mac.dmg` and `Noira-android.apk` and attaches them to a GitHub Release.
 

@@ -37,6 +37,15 @@
     "@anthropic-ai/sdk": "^1.4.0",
     "zod": "^4.6.7"
   },
+  "homepage": "https://github.com/RyoLan/noirarh#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RyoLan/noirarh.git",
+    "directory": "agent"
+  },
+  "bugs": {
+    "url": "https://github.com/RyoLan/noirarh/issues"
+  },
   "publishConfig": {
     "access": "public"
   }

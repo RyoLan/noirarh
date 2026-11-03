@@ -5,8 +5,7 @@ import { readFile, stat } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import Anthropic from '@anthropic-ai/sdk';
-import { z } from 'zod';
-import { BuildRefusedError, MODEL, slugFor, streamSite } from '../shared/build.js';
+import { BuildRefusedError, MODEL } from '../shared/build.js';
 import type { AgentStatus } from '../shared/types.js';
 import { askAgent, parseHistory } from './agent.js';
 import { DemoSource, LaunchFeed } from './feed.js';
@@ -15,7 +14,6 @@ import { DemoSource, LaunchFeed } from './feed.js';
 const ROOT = process.cwd();
 const PROD = process.argv.includes('--prod') || process.env.NODE_ENV === 'production';
 const PORT = Number(process.env.PORT ?? 5173);
-const FREE_BUILDS = Number(process.env.BUILD_FREE_PER_DAY ?? 3);
 const ASKS = Number(process.env.ASK_PER_DAY ?? 40);
 
 const feed = new LaunchFeed(new DemoSource());
@@ -95,7 +93,7 @@ async function api(req: IncomingMessage, res: ServerResponse, url: URL): Promise
   const route = `${req.method} ${url.pathname}`;
 
   if (route === 'GET /api/status') {
-    const status: AgentStatus = { model: MODEL, credentials: hasCredentials, source: feed.source.name, buildsLeft: Math.max(0, FREE_BUILDS - used('build', req)) };
+    const status: AgentStatus = { model: MODEL, credentials: hasCredentials, source: feed.source.name };
     json(res, 200, status);
     return true;
   }
@@ -149,31 +147,8 @@ async function api(req: IncomingMessage, res: ServerResponse, url: URL): Promise
     return true;
   }
 
-  if (route === 'POST /api/build') {
-    const Body = z.object({ prompt: z.string().trim().min(4).max(400) });
-    let prompt: string;
-    try { prompt = Body.parse(await readJson(req)).prompt; } catch { json(res, 400, { error: 'Describe what to build in 4–400 characters.' }); return true; }
-    if (used('build', req) >= FREE_BUILDS) {
-      json(res, 429, { error: `You have used today’s ${FREE_BUILDS} free builds. Holders build without limits.` });
-      return true;
-    }
-
-    const send = sse(res);
-    const ac = abortOnClose(req, res);
-    try {
-      send('start', { slug: slugFor(prompt), model: MODEL });
-      const html = await streamSite(claude(), prompt, {
-        onThinking: text => send('thinking', { text }),
-        onText: text => send('text', { text }),
-      }, ac.signal);
-      spend('build', req);
-      send('done', { html, slug: slugFor(prompt), buildsLeft: Math.max(0, FREE_BUILDS - used('build', req)) });
-    } catch (err) {
-      if (!ac.signal.aborted) send('error', { message: friendly(err) });
-    }
-    res.end();
-    return true;
-  }
+  // The page's Vibecode window is a scripted replay, and real builds happen in the
+  // user's own agent (`noira build`), so the site no longer spends API credit on builds.
 
   return false;
 }

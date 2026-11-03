@@ -1,6 +1,6 @@
 {
   "name": "noira-mobile",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Noira for Android: a client for a Noira gateway you run on a computer or server.",
   "type": "module",

@@ -47,7 +47,6 @@ export interface AgentStatus {
   /** whether the server found Claude credentials at start-up */
   credentials: boolean;
   source: string;
-  buildsLeft: number;
 }
 
 export const CHECK_LABELS: Record<CheckId, string> = {

@@ -119,18 +119,21 @@
       <span class="tk-k">Installer · .exe</span>
       <h3>Windows</h3>
       <p>Windows 10 or newer. Starts the gateway and opens the panel in its own window, then keeps working from the tray.</p>
+      <p class="dl-note">Preview build without a code-signing certificate: if SmartScreen appears, choose <b>More info → Run anyway</b>.</p>
       <a class="btn btn-light dl-btn" data-asset="Noira-Setup.exe" href="#download">Download for Windows <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 2v7M3 6l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></a>
     </article>
     <article class="panel dl-card tilt" data-rise data-os="mac">
       <span class="tk-k">Disk image · .dmg</span>
       <h3>macOS</h3>
       <p>Apple silicon and Intel. Lives in the menu bar and keeps working when the window is closed.</p>
+      <p class="dl-note">Preview build: the first time, right-click Noira in Applications and choose <b>Open</b>.</p>
       <a class="btn btn-light dl-btn" data-asset="Noira-mac.dmg" href="#download">Download for macOS <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 2v7M3 6l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></a>
     </article>
     <article class="panel dl-card tilt" data-rise data-os="android">
       <span class="tk-k">Package · .apk</span>
       <h3>Android</h3>
       <p>A client for a gateway you run at home or on a server, over a private network such as Tailscale.</p>
+      <p class="dl-note">When Android asks, allow your browser to <b>install unknown apps</b>.</p>
       <a class="btn btn-light dl-btn" data-asset="Noira-android.apk" href="#download">Download for Android <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M6 2v7M3 6l3 3 3-3" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></a>
     </article>
     <article class="panel dl-card wide" data-rise>
@@ -292,25 +295,25 @@ noira                # chat with it · noira panel opens the control panel</code
   <div class="sec-head">
     <p class="kicker" data-scramble>03 · Vibecode</p>
     <h2 data-split>Say it once. Watch it build.</h2>
-    <p class="sec-lede" data-rise>Describe a launch page, a dApp front end or a tool in one sentence. The agent writes it while you watch, in the browser or straight into your own folder with the CLI.</p>
+    <p class="sec-lede" data-rise>Describe a launch page, a dApp front end or a tool in one sentence. Noira writes it straight into your own folder from the terminal. Below is a replay of a real session.</p>
   </div>
 
   <div class="vibe">
     <ol class="vibe-steps">
       <li class="panel" data-rise>
         <span class="step-n">01</span>
-        <h3>Try it in the browser</h3>
-        <p>3 free builds a day. Preview it, read the code, take the file.</p>
+        <h3>Install once</h3>
+        <p><code class="inline">npm install -g @noirarh/noira</code>, or the desktop app. Then <code class="inline">noira onboard</code> picks your model.</p>
       </li>
       <li class="panel" data-rise>
         <span class="step-n">02</span>
-        <h3>Sign once, keep building</h3>
-        <p>One signature proves you hold $NOIRA. No transaction, no gas — just a key for the CLI.</p>
+        <h3>Say what you want</h3>
+        <p><code class="inline">noira build "a site for…"</code> plans the page and writes one complete, responsive file into your folder.</p>
       </li>
       <li class="panel" data-rise>
         <span class="step-n">03</span>
-        <h3>Build from your terminal</h3>
-        <p><code class="inline">noira build "a site for…"</code> and the files land in your folder.</p>
+        <h3>It asks before it acts</h3>
+        <p>Copying, publishing or running anything waits for your yes, in the terminal, the panel or your phone.</p>
       </li>
     </ol>
 
@@ -318,8 +321,8 @@ noira                # chat with it · noira panel opens the control panel</code
       <form class="vibe-form" id="vibeForm">
         <label class="sr-only" for="vibePrompt">Describe what to build</label>
         <span class="vibe-caret" aria-hidden="true">›</span>
-        <input id="vibePrompt" autocomplete="off" maxlength="400" placeholder="a launch page for my frog coin with a countdown">
-        <button class="btn btn-violet magnetic" id="vibeBtn" type="submit"><span class="vibe-btn-txt">Build</span> <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M3 9 9 3M4 3h5v5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></button>
+        <input id="vibePrompt" autocomplete="off" maxlength="120" placeholder="a launch page for my frog coin with a countdown">
+        <button class="btn btn-violet magnetic" id="vibeBtn" type="submit"><span class="vibe-btn-txt">Run</span> <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M4 2.5 9.5 6 4 9.5z" fill="currentColor"/></svg></span></button>
       </form>
       <div class="vibe-sugg" aria-label="Example prompts">
         <button type="button">a launch page for my frog coin with a countdown</button>
@@ -330,24 +333,21 @@ noira                # chat with it · noira panel opens the control panel</code
       <div class="win">
         <div class="win-bar">
           <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="win-path" id="winPath">~/my-launch</span>
+          <span class="win-path" id="winPath">~/projects — noira</span>
+          <span class="sim-tag">Simulation</span>
           <div class="win-tabs" role="tablist" aria-label="Output view">
-            <button role="tab" aria-selected="true" data-tab="preview">Preview</button>
+            <button role="tab" aria-selected="true" data-tab="term">Terminal</button>
+            <button role="tab" aria-selected="false" data-tab="preview">Preview</button>
             <button role="tab" aria-selected="false" data-tab="code">Code</button>
           </div>
-          <button class="win-dl" id="vibeDl" disabled>Download</button>
         </div>
         <div class="win-body">
-          <div class="win-empty" id="winEmpty">
-            <div class="empty-orb" aria-hidden="true"></div>
-            <p>Describe something above and press <b>Build</b>.</p>
-          </div>
-          <div class="win-think" id="vibeThink" hidden><span class="think-orb" aria-hidden="true"></span><p id="vibeThinkText">Planning…</p></div>
-          <iframe id="vibePreview" title="Generated site preview" sandbox="allow-scripts" hidden></iframe>
+          <div class="term" id="term" role="log" aria-live="polite" aria-label="Simulated terminal"><div class="t-line"><span class="t-ps">~/projects</span> <span class="t-dollar">$</span> <span class="t-cursor"></span></div></div>
+          <iframe id="vibePreview" title="Sample site preview" sandbox="allow-scripts" hidden></iframe>
           <pre class="win-code" id="vibeCode" hidden><code></code></pre>
         </div>
       </div>
-      <p class="vibe-quota" id="vibeQuotaLine"><b id="vibeQuota">3</b> free builds left today · holders build without limits</p>
+      <p class="vibe-quota">A scripted replay: nothing is sent and no model runs. Build for real with <code class="inline">npm install -g @noirarh/noira</code>.</p>
     </div>
   </div>
 </section>
