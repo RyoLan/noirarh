@@ -1,8 +1,9 @@
 // Renders the X content in content/<folder>/: for every post in posts.mjs a photo (NN-photo.png, 1600x1600), a video
-// (NN-video.mp4, 1080x1080, 8 s, H.264) and its caption (NN-caption.txt), plus captions.md with all of them.
-// Drawing happens in headless Chrome or Edge (scene.js); no ffmpeg needed.
+// (NN-video.mp4, 1080x1080, 8 s, H.264) and its caption (NN-caption.txt), plus captions.md per folder and every
+// caption in order in content/captions.txt. Drawing happens in headless Chrome or Edge (scene.js); no ffmpeg needed.
 // node scripts/content/make-content.mjs                       everything
 // node scripts/content/make-content.mjs before-launch/03      one post (also: a whole folder, or --photos to skip videos)
+// node scripts/content/make-content.mjs --captions            only the caption files
 import { spawn } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
@@ -28,6 +29,25 @@ const jobs = Object.entries(FOLDERS).flatMap(([folder, { phase, posts }]) =>
 const long = jobs.filter(j => xLength(j.post.caption) > 280);
 if (long.length) { for (const j of long) console.error(`${j.folder}/${j.n}: caption is ${xLength(j.post.caption)} of 280`); process.exit(1); }
 const todo = only ? jobs.filter(j => `${j.folder}/${j.n}`.startsWith(only)) : jobs;
+
+// captions: one captions.md per folder, and every caption in posting order in content/captions.txt
+const TITLES = { 'before-launch': 'BEFORE LAUNCH', 'after-launch': 'AFTER LAUNCH' };
+for (const [folder, { posts }] of Object.entries(FOLDERS)) {
+  const title = folder === 'before-launch' ? 'Before launch' : 'After launch';
+  const md = [`# Noira on X: ${title}`, '',
+    'Each post has a photo (`NN-photo.png`) and a video (`NN-video.mp4`) with the same number; post either one with its caption.',
+    ...(folder === 'after-launch' ? ['', 'Replace `[CA]` with the real contract address before posting.'] : []), '',
+    ...posts.flatMap((p, i) => { const n = String(i + 1).padStart(2, '0'); return [`## ${n}`, '', '```', p.caption, '```', `${xLength(p.caption)}/280`, '']; })];
+  mkdirSync(path.join(out, folder), { recursive: true });
+  writeFileSync(path.join(out, folder, 'captions.md'), md.join('\n'));
+}
+const rule = '='.repeat(48), cut = '-'.repeat(48);
+const txt = ['NOIRA ($NOIRA) · X CAPTIONS', 'Each number matches NN-photo.png / NN-video.mp4 in that folder.', 'Replace [CA] with the real contract address before posting.', '',
+  ...Object.entries(FOLDERS).flatMap(([folder, { posts }]) => [rule, `${TITLES[folder]}  (content/${folder})`, rule, '',
+    ...posts.flatMap((p, i) => [`[${TITLES[folder]} ${String(i + 1).padStart(2, '0')}]`, p.caption.replaceAll('\n', '\r\n'), cut, ''])])];
+// Windows line endings and a BOM, so Notepad shows the emoji and line breaks as written
+writeFileSync(path.join(out, 'captions.txt'), `﻿${txt.join('\r\n')}`);
+if (args.includes('--captions')) process.exit(0);
 
 const browser = [process.env.CHROME,
   'C:/Program Files/Google/Chrome/Application/chrome.exe',
@@ -77,16 +97,6 @@ for (const { folder, n, post } of todo) {
     writeFileSync(path.join(dir, `${n}-video.mp4`), Buffer.concat(parts));
   }
   console.log(`${folder}/${n}  ${post.scene}`);
-}
-
-for (const [folder, { posts }] of Object.entries(FOLDERS)) {
-  const title = folder === 'before-launch' ? 'Before launch' : 'After launch';
-  const md = [`# Noira on X: ${title}`, '',
-    'Each post has a photo (`NN-photo.png`) and a video (`NN-video.mp4`) with the same number; post either one with its caption.',
-    ...(folder === 'after-launch' ? ['', 'Replace `[CA]` with the real contract address before posting.'] : []), '',
-    ...posts.flatMap((p, i) => { const n = String(i + 1).padStart(2, '0'); return [`## ${n}`, '', '```', p.caption, '```', `${xLength(p.caption)}/280`, '']; })];
-  mkdirSync(path.join(out, folder), { recursive: true });
-  writeFileSync(path.join(out, folder, 'captions.md'), md.join('\n'));
 }
 
 ws.close();

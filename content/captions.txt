@@ -1,0 +1,322 @@
+﻿NOIRA ($NOIRA) · X CAPTIONS
+Each number matches NN-photo.png / NN-video.mp4 in that folder.
+Replace [CA] with the real contract address before posting.
+
+================================================
+BEFORE LAUNCH  (content/before-launch)
+================================================
+
+[BEFORE LAUNCH 01]
+Every launch is noise until it’s observed.
+
+Something is listening. 🌒
+
+$NOIRA
+------------------------------------------------
+
+[BEFORE LAUNCH 02]
+Meet Noira.
+
+A self-hosted AI agent that watches every Pons launch, works while you sleep, and asks before it acts.
+
+Stop guessing. Start scanning.
+
+$NOIRA
+------------------------------------------------
+
+[BEFORE LAUNCH 03]
+The moment a Pons launch goes live, Noira takes the seven measurements a careful trader would make.
+
+In seconds.
+
+Pass all seven and it collapses to signal. Everything else stays noise.
+
+$NOIRA
+------------------------------------------------
+
+[BEFORE LAUNCH 04]
+What Noira checks on every launch:
+
+▪️ Dev wallet share
+▪️ Liquidity lock
+▪️ Holder concentration
+▪️ Sniper / bundle activity
+▪️ Contract risk
+▪️ Early volume quality
+▪️ Socials metadata
+
+Seven checks. One verdict.
+
+$NOIRA
+------------------------------------------------
+
+[BEFORE LAUNCH 05]
+Noira isn’t a website you log into. It runs on a machine you control.
+
+Keys, memory and files stay in ~/.noira.
+Bring Claude, any OpenAI-compatible model, or run it locally with Ollama.
+
+$NOIRA
+------------------------------------------------
+
+[BEFORE LAUNCH 06]
+No dashboards to decode.
+
+Ask Noira in plain words:
+“Which launches today had no snipers?”
+“Latest deployer?”
+“Locked but failed?”
+
+It reads launches, wallets and holders, and answers.
+
+$NOIRA
+------------------------------------------------
+
+[BEFORE LAUNCH 07]
+Sniper Radar 📡
+
+Same-block buys, bundles and fresh wallets, flagged the second a launch lands. Before they catch you.
+
+$NOIRA
+------------------------------------------------
+
+[BEFORE LAUNCH 08]
+Entanglement Map 🪐
+
+Supply drawn as mass. Wallets that move together orbit together, so a “fair” distribution that is really one hand shows up at a glance.
+
+$NOIRA
+------------------------------------------------
+
+[BEFORE LAUNCH 09]
+Liquidity Pulse 💜
+
+Curve progress, LP moves and locks, read as one steady heartbeat. When it skips, you’ll know.
+
+$NOIRA
+------------------------------------------------
+
+[BEFORE LAUNCH 10]
+Noira works while you sleep.
+
+But it’s an agent, not an autopilot: it waits for your yes before it acts.
+
+You stay in control. It does the watching.
+
+$NOIRA
+------------------------------------------------
+
+[BEFORE LAUNCH 11]
+Noira runs where you do:
+
+🪟 Windows
+🍎 macOS
+🤖 Android (connects to your gateway)
+🌐 Web app
+⌨️ npm on Windows, macOS and Linux
+
+Install once. Let it work the night.
+
+noirarh.xyz
+------------------------------------------------
+
+[BEFORE LAUNCH 12]
+Four commands:
+
+npm install -g @noirarh/noira
+noira onboard
+noira start
+noira
+
+Needs Node 22+. Full guide at noirarh.xyz/docs
+
+$NOIRA
+------------------------------------------------
+
+[BEFORE LAUNCH 13]
+$NOIRA opens the whole agent.
+
+Hold 0.1% of supply and every detector unlocks.
+Everyone else still gets 3 free builds a day.
+
+NFA · DYOR
+------------------------------------------------
+
+[BEFORE LAUNCH 14]
+Everything Noira earns falls back into the token.
+
+🔥 Fees buy $NOIRA off the curve and send it to the dead address in one transaction
+👑 A share goes to the 5 heaviest wallets
+
+Every tx gets posted.
+
+NFA · DYOR
+------------------------------------------------
+
+[BEFORE LAUNCH 15]
+The field opens soon. 🌒
+
+$NOIRA launches on Pons.
+
+The contract address will be posted here and on noirarh.xyz, nowhere else. Ignore DMs and copycats.
+
+Turn on notifications.
+------------------------------------------------
+
+================================================
+AFTER LAUNCH  (content/after-launch)
+================================================
+
+[AFTER LAUNCH 01]
+$NOIRA is live on Pons. 🌒
+
+CA: [CA]
+
+The field is open → noirarh.xyz
+
+Only trust the CA posted here and on the site.
+------------------------------------------------
+
+[AFTER LAUNCH 02]
+The field is open.
+
+Scanner, detectors, Ask Noira and the agent downloads are all live.
+
+Let the noise collapse. Keep what’s real.
+
+noirarh.xyz
+------------------------------------------------
+
+[AFTER LAUNCH 03]
+Holding $NOIRA?
+
+Connect a wallet with 0.1% of supply and every detector opens.
+
+Not holding? You still get 3 free builds a day.
+
+noirarh.xyz
+
+NFA · DYOR
+------------------------------------------------
+
+[AFTER LAUNCH 04]
+When a launch passes all seven checks, the state collapses to signal.
+
+Dev share, liquidity lock, holders, snipers, contract, volume, socials: all scored the second it lands.
+
+$NOIRA
+------------------------------------------------
+
+[AFTER LAUNCH 05]
+Most launches never make it out of the noise.
+
+That’s the point.
+
+Noira scores every Pons launch on seven checks, so you only look at what survives.
+
+$NOIRA
+------------------------------------------------
+
+[AFTER LAUNCH 06]
+Run your own Noira:
+
+npm install -g @noirarh/noira
+noira onboard
+noira start
+
+Then type `noira` to chat, or `noira panel` for the control panel.
+
+noirarh.xyz/docs
+------------------------------------------------
+
+[AFTER LAUNCH 07]
+Prefer an installer?
+
+Windows (.exe) and macOS (.dmg) run the gateway for you from the tray or menu bar. Android connects to the gateway you run.
+
+noirarh.xyz
+------------------------------------------------
+
+[AFTER LAUNCH 08]
+“Latest deployer?”
+
+Ask Noira and it opens the wallet up: where the money came from, who it moves with, how its past launches went.
+
+Try it → noirarh.xyz
+
+$NOIRA
+------------------------------------------------
+
+[AFTER LAUNCH 09]
+Wallet X-Ray 🩻
+
+The latest deployer, opened up: where its money came from and who it moves with. Fresh wallets and mixer-like hops get flagged.
+
+$NOIRA
+------------------------------------------------
+
+[AFTER LAUNCH 10]
+How the $NOIRA burn works:
+
+1. Fees buy $NOIRA off the curve
+2. Sent straight to the dead address
+3. In the same transaction
+4. Posted here with the tx
+
+Check it on-chain.
+
+NFA · DYOR
+------------------------------------------------
+
+[AFTER LAUNCH 11]
+Top orbit 👑
+
+A share of fees goes to the 5 largest $NOIRA holders, sent by hand and posted with the transactions.
+
+NFA · DYOR
+------------------------------------------------
+
+[AFTER LAUNCH 12]
+Set it and sleep.
+
+Put Noira on a schedule and wake up to a brief of the night’s launches: scanned, sorted, waiting for you.
+
+It still asks before it acts.
+
+$NOIRA
+------------------------------------------------
+
+[AFTER LAUNCH 13]
+This is what a run looks like.
+
+A schedule fires. Noira calls its tools, writes its files, then stops and waits for your yes.
+
+Watch the full simulation on noirarh.xyz
+
+$NOIRA
+------------------------------------------------
+
+[AFTER LAUNCH 14]
+Six instruments, one dark sky:
+
+01 Launch Scanner
+02 Wallet X-Ray
+03 Entanglement Map
+04 Sniper Radar
+05 Liquidity Pulse
+06 Ask Noira
+
+All live → noirarh.xyz
+
+$NOIRA
+------------------------------------------------
+
+[AFTER LAUNCH 15]
+Thank you to everyone who stepped into the dark with us. 🌒
+
+We’re just getting started.
+
+Let the noise collapse. Keep what’s real.
+
+$NOIRA
+------------------------------------------------
