@@ -10,7 +10,7 @@ import { $, $$ } from './ui/dom';
 import { cursor, driveScene, heroIntro, heroScroll, pointerToys, preloader, sectionReveals, smoothScroll } from './ui/motion';
 import { Scanner } from './ui/scanner';
 import { Ticker } from './ui/ticker';
-import { Vibe } from './ui/vibe';
+import { Simulation } from './ui/simulation';
 
 // Fill these in at launch: the copy button and the buy link switch on by themselves.
 const CONTRACT_ADDRESS = '';
@@ -36,7 +36,7 @@ smoothScroll(ticker);
 const scanner = new Scanner();
 const detectors = new Detectors(scanner);
 const ask = new Ask();
-new Vibe();
+new Simulation();
 
 scanner.on('launch', l => ticker.push(l));
 scanner.on('signal', () => scene.ok && scene.pulse());

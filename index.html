@@ -39,7 +39,7 @@
       <li><a href="#download">Download</a></li>
       <li><a href="#scanner">Scanner</a></li>
       <li><a href="#detectors">Detectors</a></li>
-      <li><a href="#vibecode">Vibecode</a></li>
+      <li><a href="#vibecode">Simulation</a></li>
       <li><a href="#token">$NOIRA</a></li>
       <li><a href="/docs">Docs</a></li>
     </ul>
@@ -290,64 +290,63 @@ noira                # chat with it · noira panel opens the control panel</code
   </div>
 </section>
 
-<!-- ============ VIBECODE ============ -->
+<!-- ============ SIMULATION ============ -->
 <section class="section" id="vibecode">
-  <div class="sec-head">
-    <p class="kicker" data-scramble>03 · Vibecode</p>
-    <h2 data-split>Say it once. Watch it build.</h2>
-    <p class="sec-lede" data-rise>Describe a launch page, a dApp front end or a tool in one sentence. Noira writes it straight into your own folder from the terminal. Below is a replay of a real session.</p>
+  <div class="sec-head split">
+    <div>
+      <p class="kicker" data-scramble>03 · Simulation</p>
+      <h2 data-split>Watch it work.</h2>
+    </div>
+    <p class="sec-lede" data-rise>A scripted example of the Noira gateway at work: the tools it calls, the files it writes, and the moments it waits for your yes. Nothing here is really sent.</p>
   </div>
 
-  <div class="vibe">
-    <ol class="vibe-steps">
-      <li class="panel" data-rise>
-        <span class="step-n">01</span>
-        <h3>Install once</h3>
-        <p><code class="inline">npm install -g @noirarh/noira</code>, or the desktop app. Then <code class="inline">noira onboard</code> picks your model.</p>
-      </li>
-      <li class="panel" data-rise>
-        <span class="step-n">02</span>
-        <h3>Say what you want</h3>
-        <p><code class="inline">noira build "a site for…"</code> plans the page and writes one complete, responsive file into your folder.</p>
-      </li>
-      <li class="panel" data-rise>
-        <span class="step-n">03</span>
-        <h3>It asks before it acts</h3>
-        <p>Copying, publishing or running anything waits for your yes, in the terminal, the panel or your phone.</p>
-      </li>
-    </ol>
-
-    <div class="builder panel" data-rise>
-      <form class="vibe-form" id="vibeForm">
-        <label class="sr-only" for="vibePrompt">Describe what to build</label>
-        <span class="vibe-caret" aria-hidden="true">›</span>
-        <input id="vibePrompt" autocomplete="off" maxlength="120" placeholder="a launch page for my frog coin with a countdown">
-        <button class="btn btn-violet magnetic" id="vibeBtn" type="submit"><span class="vibe-btn-txt">Run</span> <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M4 2.5 9.5 6 4 9.5z" fill="currentColor"/></svg></span></button>
-      </form>
-      <div class="vibe-sugg" aria-label="Example prompts">
-        <button type="button">a launch page for my frog coin with a countdown</button>
-        <button type="button">a staking dashboard for a dragon token</button>
-        <button type="button">an ocean themed meme coin site called "Tidal"</button>
+  <div class="sim panel" data-rise id="sim">
+    <div class="sim-top">
+      <div class="sim-tabs" role="tablist" aria-label="Scenarios">
+        <button role="tab" aria-selected="true" data-s="brief">Morning brief</button>
+        <button role="tab" aria-selected="false" data-s="build">Build a page</button>
+        <button role="tab" aria-selected="false" data-s="scan">Scan launches</button>
+        <button role="tab" aria-selected="false" data-s="fix">Fix a problem</button>
       </div>
+      <div class="sim-meta">
+        <span class="sim-badge">Simulation</span>
+        <span class="sim-from">Starts from: <b id="simFrom">Schedule · weekdays 08:00</b></span>
+        <span class="sim-count" id="simCount">0/10</span>
+        <button class="sim-pause" id="simPause" type="button" aria-pressed="false">Pause</button>
+      </div>
+    </div>
+    <div class="sim-bar" aria-hidden="true"><i id="simBar"></i></div>
 
-      <div class="win">
-        <div class="win-bar">
+    <div class="sim-stage">
+      <div class="gw-win">
+        <div class="gw-bar">
           <span class="win-dots" aria-hidden="true"><i></i><i></i><i></i></span>
-          <span class="win-path" id="winPath">~/projects — noira</span>
-          <span class="sim-tag">Simulation</span>
-          <div class="win-tabs" role="tablist" aria-label="Output view">
-            <button role="tab" aria-selected="true" data-tab="term">Terminal</button>
-            <button role="tab" aria-selected="false" data-tab="preview">Preview</button>
-            <button role="tab" aria-selected="false" data-tab="code">Code</button>
+          <span class="gw-title"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M20.5 4.5a11.5 11.5 0 1 0 7 17.6A9.6 9.6 0 0 1 20.5 4.5z" fill="currentColor"/></svg>Noira <code>127.0.0.1:18790</code></span>
+          <span class="gw-live"><i></i>Live</span>
+        </div>
+        <div class="gw-panes">
+          <div class="gw-run">
+            <p class="gw-h">Agent run <span>tool calls and approvals</span></p>
+            <ol class="run-list" id="runList" aria-live="polite"></ol>
+          </div>
+          <div class="gw-ws">
+            <p class="gw-h">Workspace <span>~/.noira/workspace</span></p>
+            <div class="ws-tabs" id="wsTabs"><span class="ws-empty">No files yet</span></div>
+            <div class="ws-path" id="wsPath"></div>
+            <pre class="ws-code" id="wsCode"></pre>
           </div>
         </div>
-        <div class="win-body">
-          <div class="term" id="term" role="log" aria-live="polite" aria-label="Simulated terminal"><div class="t-line"><span class="t-ps">~/projects</span> <span class="t-dollar">$</span> <span class="t-cursor"></span></div></div>
-          <iframe id="vibePreview" title="Sample site preview" sandbox="allow-scripts" hidden></iframe>
-          <pre class="win-code" id="vibeCode" hidden><code></code></pre>
+        <div class="gw-foot"><span>gateway · 127.0.0.1 only</span><span>policy · asks before acting</span><span>model · your choice</span></div>
+      </div>
+
+      <div class="phone" aria-label="Noira on your phone, simulated">
+        <div class="phone-in">
+          <div class="phone-status"><span>9:41</span><i class="notch"></i><span class="sig">▂▄▆ ◔</span></div>
+          <div class="phone-head"><span class="ph-av"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M20.5 4.5a11.5 11.5 0 1 0 7 17.6A9.6 9.6 0 0 1 20.5 4.5z" fill="currentColor"/></svg></span><div><b>Noira</b><small>your gateway · simulated</small></div></div>
+          <div class="phone-chat" id="phoneChat"><p class="ph-empty">Messages arrive here.</p></div>
+          <div class="phone-input"><span>Message</span><i></i></div>
         </div>
       </div>
-      <p class="vibe-quota">A scripted replay: nothing is sent and no model runs. Build for real with <code class="inline">npm install -g @noirarh/noira</code>.</p>
     </div>
   </div>
 </section>
@@ -405,7 +404,7 @@ noira                # chat with it · noira panel opens the control panel</code
   <h2 class="final-h" id="finalH">Let the noise collapse.<br>Keep what’s real.</h2>
   <div class="cta-row center" data-rise>
     <a class="btn btn-violet magnetic" href="#scanner">Enter Noira <span class="arrow-chip" aria-hidden="true"><svg viewBox="0 0 12 12"><path d="M3 9 9 3M4 3h5v5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></span></a>
-    <a class="btn btn-ghost magnetic" href="#vibecode">Vibecode with it</a>
+    <a class="btn btn-ghost magnetic" href="#vibecode">Watch it work</a>
   </div>
 </section>
 
@@ -419,7 +418,7 @@ noira                # chat with it · noira panel opens the control panel</code
       <a href="/docs">Docs</a>
       <a href="#scanner">Scanner</a>
       <a href="#detectors">Detectors</a>
-      <a href="#vibecode">Vibecode</a>
+      <a href="#vibecode">Simulation</a>
       <a href="#token">Token</a>
     </nav>
   </div>
