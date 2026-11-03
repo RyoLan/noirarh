@@ -1,20 +1,24 @@
 // The Noira mark: rows of noise that only become a crescent where the signal is.
-// Shared by brand/logos.mjs, the app icons (agent/scripts/make-icons.mjs) and the inline site marks.
+// Shared by brand/logos.mjs, the app icons (agent/scripts/make-icons.mjs) and the inline site marks
+// (brand/sync-marks.mjs writes them into the HTML).
 
 /**
- * Bars of the mark in the given box. Each bar is { x1, x2, y, noise } where `noise` bars sit left of the crescent.
- * `step` is the row pitch and `gap` the space between a noise bar and the crescent row it leads into.
+ * Bars of the mark, centred in a `size` box. Each bar is { x1, x2, y, noise } where `noise` bars sit left of the
+ * crescent. `step` is the row pitch and `gap` the space between a noise bar and the crescent row it leads into.
+ *
+ * The crescent is a disc of radius `r` minus a larger "bite" disc up and to the right. The bite's top and bottom both
+ * fall outside the disc, so every row is one unbroken bar and both horns taper to a point instead of being cut off.
  */
-export function signalBars({ cx, cy, r, step, gap, noiseMin, noiseRange }) {
-  const bx = cx + r * 0.42, by = cy - r * 0.36, br = r * 0.82;
+export function signalBars({ size, r, step, gap, noiseMin, noiseRange }) {
+  const bx = r * 0.6, by = -r * 0.22, br = r * 1.05;
   const bars = [];
-  const rows = Math.floor((2 * r - step * 0.7) / step);
-  const top = cy - (rows - 1) * step / 2;
+  const rows = Math.floor(2 * r / step);
+  const top = -(rows - 1) * step / 2;
   for (let i = 0; i < rows; i++) {
     const y = top + i * step;
-    const half = Math.sqrt(Math.max(0, r * r - (y - cy) ** 2));
-    const x1 = cx - half;
-    let x2 = cx + half;
+    const half = Math.sqrt(Math.max(0, r * r - y * y));
+    const x1 = -half;
+    let x2 = half;
     const bh = Math.sqrt(Math.max(0, br * br - (y - by) ** 2));
     if (bh > 0) x2 = Math.min(x2, bx - bh);
     if (x2 - x1 < step * 0.3) continue;
@@ -22,7 +26,10 @@ export function signalBars({ cx, cy, r, step, gap, noiseMin, noiseRange }) {
     bars.push({ x1: x1 - noise, x2: x1 - gap, y, noise: true });
     bars.push({ x1, x2, y, noise: false });
   }
-  return bars;
+  // centre the drawn extent in the box (the round caps add the same margin on every side)
+  const dx = size / 2 - (Math.min(...bars.map(b => b.x1)) + Math.max(...bars.map(b => b.x2))) / 2;
+  const dy = size / 2 - (Math.min(...bars.map(b => b.y)) + Math.max(...bars.map(b => b.y))) / 2;
+  return bars.map(b => ({ x1: b.x1 + dx, x2: b.x2 + dx, y: b.y + dy, noise: b.noise }));
 }
 
 const f = n => +n.toFixed(2);
@@ -35,9 +42,9 @@ export function signalLines(opts, { main = 'currentColor', dim = 'currentColor',
 }
 
 /** The full-detail mark (512 box): sixteen rows, for logos, avatars and headers. */
-export const LARGE = { cx: 286, cy: 262, r: 160, step: 20, gap: 14, noiseMin: 36, noiseRange: 70, sw: 11 };
-/** The small mark (32 box): eight thicker rows and fainter noise, so it still reads at 16–24px. */
-export const SMALL = { cx: 19.5, cy: 16, r: 13, step: 2.9, gap: 1.9, noiseMin: 2, noiseRange: 3, sw: 1.9 };
+export const LARGE = { size: 512, r: 160, step: 20, gap: 14, noiseMin: 36, noiseRange: 70, sw: 11 };
+/** The small mark (32 box): nine thicker rows and fainter noise, so it still reads at 16–24px. */
+export const SMALL = { size: 32, r: 12, step: 2.6, gap: 1.9, noiseMin: 2, noiseRange: 3, sw: 1.7 };
 
 /** Inline site mark in currentColor, e.g. for the nav. */
 export const smallSvg = (attrs = '') =>
