@@ -14,6 +14,7 @@ import { DemoSource, LaunchFeed } from './feed.js';
 const ROOT = process.cwd();
 const PROD = process.argv.includes('--prod') || process.env.NODE_ENV === 'production';
 const PORT = Number(process.env.PORT ?? 5173);
+const HOST = process.env.HOST; // e.g. 127.0.0.1 behind a reverse proxy; unset listens on every interface
 const ASKS = Number(process.env.ASK_PER_DAY ?? 40);
 
 const feed = new LaunchFeed(new DemoSource());
@@ -238,7 +239,7 @@ createHttpServer(async (req, res) => {
     if (!res.headersSent) json(res, 500, { error: 'Server error' });
     else res.end();
   }
-}).listen(PORT, () => {
+}).listen(PORT, HOST, () => {
   console.log(`Noira running at http://localhost:${PORT}  (${PROD ? 'production' : 'dev'}, model ${MODEL}, feed: ${feed.source.name})`);
   if (!hasCredentials) console.warn('No Claude credentials found: set ANTHROPIC_API_KEY in .env so Ask Noira and the builder can run.');
 });
