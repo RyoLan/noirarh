@@ -1,0 +1,381 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Noira Docs · Install, run and control your agent</title>
+<meta name="description" content="How to install Noira, run the gateway, use the CLI and control panel, set permissions, schedule jobs, and call the HTTP API.">
+<meta name="theme-color" content="#07040f">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%2305030c'/%3E%3Cpath d='M41 9a23 23 0 1 0 14 35.2A19.2 19.2 0 0 1 41 9z' fill='%23dccfff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;600&display=swap" rel="stylesheet">
+</head>
+<body class="docs-body">
+
+<header class="dnav">
+  <a class="dbrand" href="/" aria-label="Noira home">
+    <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M20.5 4.5a11.5 11.5 0 1 0 7 17.6A9.6 9.6 0 0 1 20.5 4.5z" fill="currentColor"/></svg>
+    <span>Noira</span><em>Docs</em>
+  </a>
+  <nav class="dnav-links" aria-label="Site">
+    <a href="/">Home</a>
+    <a href="/#download">Download</a>
+    <a href="/docs.html" aria-current="page">Docs</a>
+    <a href="https://www.npmjs.com/package/@noirarh/noira" rel="noopener">npm</a>
+  </nav>
+  <button class="toc-toggle" aria-expanded="false" aria-controls="toc">Contents</button>
+</header>
+
+<div class="dwrap">
+  <aside class="toc" id="toc" aria-label="Contents">
+    <p class="toc-h">Getting started</p>
+    <a href="#website">What this website is</a>
+    <a href="#overview">Overview and architecture</a>
+    <a href="#install">Install</a>
+    <a href="#models">Models</a>
+    <p class="toc-h">Using Noira</p>
+    <a href="#cli">Command line</a>
+    <a href="#panel">Control panel and apps</a>
+    <a href="#tools">Tools and permissions</a>
+    <a href="#approvals">Approvals</a>
+    <a href="#jobs">Scheduled jobs</a>
+    <a href="#memory">Memory</a>
+    <a href="#launch">Launch tools</a>
+    <p class="toc-h">Reference</p>
+    <a href="#config">Configuration</a>
+    <a href="#api">HTTP API</a>
+    <a href="#security">Security</a>
+    <a href="#troubleshooting">Troubleshooting</a>
+    <a href="#token">$NOIRA</a>
+  </aside>
+
+  <main class="doc" id="doc">
+    <header class="doc-hero">
+      <p class="eyebrow">Documentation</p>
+      <h1>Run an AI agent on a machine you control</h1>
+      <p class="lead">Noira is a self-hosted AI agent. One gateway runs on your computer or server, you drive it from the terminal, the desktop app, the control panel or your phone, and it asks before doing anything risky. These pages cover all of it, from the first install to the HTTP API.</p>
+    </header>
+
+    <!-- ============================================================ -->
+    <section id="website">
+      <h2>What this website is<a class="anchor" href="#website" aria-label="Link to this section">#</a></h2>
+      <p>This site is the product page and documentation for Noira. It also runs a demo launch feed, Ask Noira and the web site builder, which are labelled as such. The agent you install is a different thing: it runs on your own machine, never on this site.</p>
+      <div class="cards3">
+        <div class="dcard"><span class="n">01</span><h3>This site</h3><p>Shows what Noira does, gives you the installers and the install command, and publishes the launch feed at <code>/api/launches</code> that the agent can read.</p></div>
+        <div class="dcard"><span class="n">02</span><h3>Your control panel</h3><p>A page served by your own gateway at <code>127.0.0.1:18790/panel.html</code> with a private token. Chat, approvals, jobs, memory, files and settings live there.</p></div>
+        <div class="dcard"><span class="n">03</span><h3>The product</h3><p>Noira itself is an npm package, <code>@noirarh/noira</code>: a gateway, a CLI, a scheduler, tools and the control panel. It lives on your machine.</p></div>
+      </div>
+      <div class="note"><b>i</b><p>The control panel page carries your gateway token. Treat a link that contains it like a password and never paste it anywhere public.</p></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="overview">
+      <h2>Overview and architecture<a class="anchor" href="#overview" aria-label="Link to this section">#</a></h2>
+      <p>Everything is one Node process called the <b>gateway</b>, plus a thin CLI that talks to it over HTTP. There is no database and no cloud account. State is JSON files in one folder.</p>
+      <h3>The parts</h3>
+      <dl class="parts">
+        <div><dt>Gateway</dt><dd>An HTTP server on <code>127.0.0.1:18790</code>. Serves the control panel, exposes the API, streams events, and owns everything below.</dd></div>
+        <div><dt>Agent</dt><dd>The loop that sends your task to the model, runs the tools it asks for, and pauses for your approval when a tool needs it.</dd></div>
+        <div><dt>CLI</dt><dd><code>noira</code>. Starts and stops the gateway, chats, and manages approvals, jobs and memory by calling the API.</dd></div>
+        <div><dt>Control panel</dt><dd>The web app the gateway serves. The same panel runs inside the desktop app and the Android app, and installs as a web app.</dd></div>
+        <div><dt>Scheduler</dt><dd>Cron jobs that start a run on their own while the gateway is up. Results land in Activity.</dd></div>
+        <div><dt>Tools</dt><dd>Files, shell, web fetch, memory, schedules, the launch feed and the site builder, each with its own permission.</dd></div>
+      </dl>
+      <h3>How a task flows</h3>
+      <ol class="flow">
+        <li><b>You hand it a task</b><span>From <code>noira</code>, the control panel, the desktop or phone app, or a scheduled job. It lands on <code>POST /api/runs</code>.</span></li>
+        <li><b>The agent calls the model</b><span>Claude by default, or any OpenAI-compatible endpoint such as Ollama. Text streams out as events while it is written.</span></li>
+        <li><b>The model asks for tools</b><span>Each call is checked against its schema, then against your policy: <em>allow</em> runs now, <em>ask</em> waits for you, <em>block</em> is refused.</span></li>
+        <li><b>You approve or deny</b><span>In the terminal, in the panel, or in the app. An unanswered request is denied when it expires (12 hours by default).</span></li>
+        <li><b>Results go back to the model</b><span>Up to 30 steps per run. When the model stops asking for tools, its last text is the answer, and the run is saved to disk.</span></li>
+      </ol>
+      <h3>The data folder</h3>
+      <p>Everything lives in <code>~/.noira</code>, or wherever <code>NOIRA_HOME</code> points. Keys are stored in plain text. Never commit or share this folder.</p>
+      <div class="code"><pre><code>~/.noira/
+├── config.json      provider, model, key, token, port, policy, feed URL
+├── memory.json      saved memories, put in front of the model on every run
+├── jobs.json        scheduled jobs with their last run
+├── runs/            one JSON file per run (the newest 300 are kept)
+├── gateway.pid      pid of the running gateway
+├── gateway.log      its log, read with noira logs
+└── workspace/       where the agent works; file tools stay inside it</code></pre><button class="copy-code" type="button">Copy</button></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="install">
+      <h2>Install<a class="anchor" href="#install" aria-label="Link to this section">#</a></h2>
+      <p>Noira needs <b>Node 22 or newer</b> and a model: a Claude API key, any OpenAI-compatible endpoint, or a local model with Ollama. Install it once from npm, then run the guided setup.</p>
+      <h3>Linux and macOS</h3>
+      <div class="code"><pre><code>npm install -g @noirarh/noira
+noira onboard</code></pre><button class="copy-code" type="button">Copy</button></div>
+      <h3>Windows</h3>
+      <p>PowerShell blocks the <code>.ps1</code> shims that npm installs, so call the <code>.cmd</code> versions:</p>
+      <div class="code"><pre><code>npm.cmd install -g @noirarh/noira
+noira.cmd onboard</code></pre><button class="copy-code" type="button">Copy</button></div>
+      <p>To use the short names instead, allow local scripts once for your account and open a new terminal:</p>
+      <div class="code"><pre><code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code></pre><button class="copy-code" type="button">Copy</button></div>
+      <h3>What onboard does</h3>
+      <ol class="flow">
+        <li><b>Picks a model</b><span>Claude (asks for your Anthropic key and the model, default <code>claude-opus-5-5</code>), an OpenAI-compatible endpoint (base URL, model, key), or Ollama (local URL and model, no key).</span></li>
+        <li><b>Checks it</b><span>Sends one tiny request so a wrong key shows up now, not at 3 a.m. The key input is hidden.</span></li>
+        <li><b>Saves the config</b><span>To <code>~/.noira/config.json</code>. Then start the gateway with <code>noira start</code> and talk to it with <code>noira</code>.</span></li>
+      </ol>
+      <h3>Desktop and mobile apps</h3>
+      <p>You do not have to live in the terminal. The <a href="/#download">Download</a> section has installers for each platform, built from the same source as the npm package.</p>
+      <div class="cards3">
+        <div class="dcard"><h3>Windows · .exe</h3><p>Windows 10 or newer. Starts the gateway when it launches and opens the panel in its own window. Closing the window keeps Noira working from the tray; <b>Start when I log in</b> is in the tray menu.</p></div>
+        <div class="dcard"><h3>macOS · .dmg</h3><p>Apple silicon and Intel. Lives in the menu bar and keeps working when the window is closed. If a gateway started from the terminal is already running, the app uses it.</p></div>
+        <div class="dcard"><h3>Android · .apk</h3><p>A remote client. You enter the address and token of a gateway you run on a computer or server, reached over a private network such as Tailscale. See <a href="#panel">phone pairing</a>.</p></div>
+      </div>
+      <div class="note warn"><b>!</b><p>The gateway needs Node and runs on a computer or a server, never on the phone. The mobile app controls a gateway; it does not contain one.</p></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="models">
+      <h2>Models<a class="anchor" href="#models" aria-label="Link to this section">#</a></h2>
+      <table>
+        <thead><tr><th>Provider</th><th>Set up</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Claude</td><td>Anthropic API key</td><td>The default, model <code>claude-opus-5-5</code>. <code>ANTHROPIC_API_KEY</code> in the environment overrides the saved key.</td></tr>
+          <tr><td>OpenAI-compatible</td><td>Base URL, model, key</td><td>OpenAI (<code>https://api.openai.com/v1</code>), OpenRouter, Groq, LM Studio and others. <code>OPENAI_API_KEY</code> overrides the saved key. The model must support tool calls.</td></tr>
+          <tr><td>Ollama</td><td>Local URL and model</td><td><code>http://127.0.0.1:11434/v1</code>, no key. Prompts never leave the machine. Pick a model with tool support, such as <code>llama3.1</code> or <code>qwen2.5</code>.</td></tr>
+        </tbody>
+      </table>
+      <p>Change the model any time with <code>noira onboard</code> or in <b>Settings → Model</b> of the panel.</p>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="cli">
+      <h2>Command line<a class="anchor" href="#cli" aria-label="Link to this section">#</a></h2>
+      <p>Every command calls the gateway's API with the token from <code>~/.noira/config.json</code>. If the gateway is not running, commands that need it tell you so. On Windows PowerShell write <code>noira.cmd</code> instead of <code>noira</code>, unless you allowed local scripts.</p>
+      <h3>Setup and gateway</h3>
+      <table>
+        <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>noira onboard</code></td><td>Guided setup: model, key, a test request. <code>noira setup</code> is an alias.</td></tr>
+          <tr><td><code>noira start [--remote]</code></td><td>Starts the gateway as a background process. <code>--remote</code> listens on every interface for the phone app (token still required).</td></tr>
+          <tr><td><code>noira stop</code></td><td>Stops the gateway.</td></tr>
+          <tr><td><code>noira status</code></td><td>Gateway, model, active runs, waiting approvals, jobs, memories and the workspace path.</td></tr>
+          <tr><td><code>noira gateway [--remote] [--port n]</code></td><td>Runs the gateway in this window. Ctrl+C stops it.</td></tr>
+          <tr><td><code>noira logs</code></td><td>The last 60 lines of <code>gateway.log</code>.</td></tr>
+          <tr><td><code>noira panel</code></td><td>Starts the gateway if needed and opens the control panel in your browser.</td></tr>
+          <tr><td><code>noira pair</code></td><td>Prints the addresses and token for the Android app. Needs <code>noira start --remote</code>.</td></tr>
+        </tbody>
+      </table>
+      <h3>Talking to the agent</h3>
+      <table>
+        <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>noira</code></td><td>Runs onboarding if nothing is set up, starts the gateway if it is stopped, then opens a chat.</td></tr>
+          <tr><td><code>noira chat</code></td><td>Interactive chat that keeps the conversation. Tool calls show as they happen, approvals are asked inline: <b>y</b>es, <b>n</b>o, or <b>a</b>lways. <code>/exit</code> leaves.</td></tr>
+          <tr><td><code>noira run "task"</code></td><td>One task, streamed, then exit. Exit code 0 when it finished.</td></tr>
+          <tr><td><code>noira approvals</code></td><td>Lists what is waiting for you.</td></tr>
+          <tr><td><code>noira approve &lt;id&gt; [--always]</code></td><td>Allows one request. <code>--always</code> also sets that tool to <em>allow</em>.</td></tr>
+          <tr><td><code>noira deny &lt;id&gt;</code></td><td>Refuses it.</td></tr>
+        </tbody>
+      </table>
+      <h3>Jobs, memory and Noira tools</h3>
+      <table>
+        <thead><tr><th>Command</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>noira jobs</code></td><td>Jobs with their schedule, on/off and next run.</td></tr>
+          <tr><td><code>noira jobs add "0 8 * * 1-5" "task" [--name n]</code></td><td>Adds a job. The cron expression is checked before saving.</td></tr>
+          <tr><td><code>noira jobs run|on|off|rm &lt;id&gt;</code></td><td>Runs one now, switches it on or off, or deletes it.</td></tr>
+          <tr><td><code>noira memory</code> · <code>memory add "text"</code> · <code>memory rm &lt;id&gt;</code></td><td>The facts the agent keeps between runs.</td></tr>
+          <tr><td><code>noira build "site idea" [--out dir]</code></td><td>Writes a complete single-file website into <code>./&lt;name&gt;/index.html</code>. Works without the gateway.</td></tr>
+          <tr><td><code>noira scan [--signal]</code></td><td>The latest launches from the feed, or only the ones that passed all seven checks.</td></tr>
+          <tr><td><code>noira --version</code> · <code>noira help</code></td><td>The version, and the full list in the terminal.</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><b>i</b><p><code>NOIRA_HOME</code> moves the data folder. Set it for the CLI and the gateway alike, because the CLI finds the gateway's port and token through it.</p></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="panel">
+      <h2>Control panel and apps<a class="anchor" href="#panel" aria-label="Link to this section">#</a></h2>
+      <p>Open it with <code>noira panel</code>, or go to <code>http://127.0.0.1:18790/panel.html</code> on the machine that runs the gateway.</p>
+      <table>
+        <thead><tr><th>Page</th><th>What it is for</th></tr></thead>
+        <tbody>
+          <tr><td>Chat</td><td>Hand Noira a job. Tool steps and approval cards appear inside the answer; <b>Stop</b> ends a running task.</td></tr>
+          <tr><td>Approvals</td><td>Everything waiting for your yes, with Allow, Always allow and Deny. Turn on browser notifications here.</td></tr>
+          <tr><td>Activity</td><td>Every run, whoever started it, with each tool call and its output.</td></tr>
+          <tr><td>Jobs</td><td>Schedule tasks with presets or your own cron expression; switch them on and off, run them now.</td></tr>
+          <tr><td>Memory</td><td>Read, add and forget what Noira keeps.</td></tr>
+          <tr><td>Files</td><td>Browse the workspace and preview what the agent wrote, HTML pages included.</td></tr>
+          <tr><td>Settings</td><td>Model and key, launch feed, approval timeout, and the permission of every tool.</td></tr>
+        </tbody>
+      </table>
+      <h3>Install it as an app</h3>
+      <p>In Chrome or Edge, open the panel and choose <b>Install app</b> in the sidebar or the address bar. It opens in its own window like a native app, on any device that can reach your gateway.</p>
+      <h3 id="pairing">Connect your phone</h3>
+      <ol class="flow">
+        <li><b>Put both devices on a private network</b><span>Tailscale is the simplest: install it on the computer and the phone and sign in to the same account.</span></li>
+        <li><b>Start the gateway for remote use</b><span><code>noira stop</code>, then <code>noira start --remote</code>.</span></li>
+        <li><b>Get the details</b><span><code>noira pair</code> prints the gateway address (Tailscale addresses start with <code>100.</code>) and the token.</span></li>
+        <li><b>Connect</b><span>Open the Noira app on Android, enter the address and token, and tap Connect.</span></li>
+      </ol>
+      <div class="note warn"><b>!</b><p>Never forward port 18790 on your router or expose it to the internet. Anyone with the token can run commands on your machine.</p></div>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="tools">
+      <h2>Tools and permissions<a class="anchor" href="#tools" aria-label="Link to this section">#</a></h2>
+      <p>The model gets thirteen tools. Each has a permission: <span class="pill ok">allow</span> runs without asking, <span class="pill ask">ask</span> waits for your answer, <span class="pill no">block</span> refuses and tells the model the tool is off. Change them in <b>Settings → Permissions</b>, or answer <b>Always allow</b> to an approval.</p>
+      <table>
+        <thead><tr><th>Tool</th><th>Default</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>list_files</code></td><td><span class="pill ok">allow</span></td><td>Lists a folder in the workspace.</td></tr>
+          <tr><td><code>read_file</code></td><td><span class="pill ok">allow</span></td><td>Reads a text file. Output is clipped at 60,000 characters.</td></tr>
+          <tr><td><code>write_file</code></td><td><span class="pill ask">ask</span></td><td>Creates or overwrites a file, making folders as needed.</td></tr>
+          <tr><td><code>run_shell</code></td><td><span class="pill ask">ask</span></td><td>Runs a command in the workspace (cmd.exe on Windows, sh elsewhere) for up to 2 minutes; output is clipped at 20,000 characters. Model API keys are removed from its environment.</td></tr>
+          <tr><td><code>fetch_url</code></td><td><span class="pill ask">ask</span></td><td>Fetches an http(s) page and returns its text, HTML stripped.</td></tr>
+          <tr><td><code>remember</code></td><td><span class="pill ok">allow</span></td><td>Saves a durable fact to memory.</td></tr>
+          <tr><td><code>recall</code></td><td><span class="pill ok">allow</span></td><td>Searches memory by keywords.</td></tr>
+          <tr><td><code>forget</code></td><td><span class="pill ask">ask</span></td><td>Deletes a memory.</td></tr>
+          <tr><td><code>schedule_job</code></td><td><span class="pill ask">ask</span></td><td>Creates a recurring job.</td></tr>
+          <tr><td><code>list_jobs</code></td><td><span class="pill ok">allow</span></td><td>Lists jobs and their next runs.</td></tr>
+          <tr><td><code>cancel_job</code></td><td><span class="pill ask">ask</span></td><td>Deletes a job.</td></tr>
+          <tr><td><code>scan_launches</code></td><td><span class="pill ok">allow</span></td><td>Reads recent launches and their seven checks from the feed.</td></tr>
+          <tr><td><code>build_site</code></td><td><span class="pill ask">ask</span></td><td>Writes a complete website into a workspace folder.</td></tr>
+        </tbody>
+      </table>
+      <h3>The workspace boundary</h3>
+      <p>File tools resolve paths inside <code>~/.noira/workspace</code> and refuse anything outside it, such as <code>../config.json</code>. To give Noira another folder, add it to <code>allowedRoots</code> in the config. Shell commands start in the workspace but, once you approve them, run with your user's rights, so read what you approve.</p>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="approvals">
+      <h2>Approvals<a class="anchor" href="#approvals" aria-label="Link to this section">#</a></h2>
+      <p>When a tool set to <em>ask</em> is called, the run pauses and an approval appears everywhere at once: inline in <code>noira chat</code> and <code>noira run</code>, in <code>noira approvals</code>, on the panel's Approvals page and in the chat that started it. Answer it in any of those places; the first answer wins.</p>
+      <ul class="dlist">
+        <li><b>Allow</b> runs this one call.</li>
+        <li><b>Always allow</b> runs it and sets the tool to <em>allow</em> from now on.</li>
+        <li><b>Deny</b> refuses it. The model is told and continues without it.</li>
+      </ul>
+      <p>Requests made by scheduled jobs at night wait for you in the morning. If nobody answers before <code>approvalTimeoutMin</code> (720 minutes by default), the request counts as denied. Stopping a run denies whatever it was waiting for.</p>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="jobs">
+      <h2>Scheduled jobs<a class="anchor" href="#jobs" aria-label="Link to this section">#</a></h2>
+      <p>A job is a task plus a five-field cron expression in the machine's local time: <code>minute hour day-of-month month day-of-week</code>. Jobs run while the gateway is up; if the computer is off, that run is skipped.</p>
+      <table>
+        <thead><tr><th>Expression</th><th>Runs</th></tr></thead>
+        <tbody>
+          <tr><td><code>0 8 * * 1-5</code></td><td>Every weekday at 08:00</td></tr>
+          <tr><td><code>0 7 * * *</code></td><td>Every day at 07:00</td></tr>
+          <tr><td><code>*/30 * * * *</code></td><td>Every 30 minutes</td></tr>
+          <tr><td><code>0 16 * * 5</code></td><td>Fridays at 16:00</td></tr>
+          <tr><td><code>0 9 1 * *</code></td><td>The first of every month at 09:00</td></tr>
+        </tbody>
+      </table>
+      <div class="code"><pre><code>noira jobs add "0 8 * * 1-5" "Scan the latest launches and write the signals to brief.md" --name "Morning brief"</code></pre><button class="copy-code" type="button">Copy</button></div>
+      <p>You can also just ask: <em>"Every Friday at 4 pm, summarize my notes into weekly.md."</em> Noira will propose the job with <code>schedule_job</code> and wait for your approval.</p>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="memory">
+      <h2>Memory<a class="anchor" href="#memory" aria-label="Link to this section">#</a></h2>
+      <p>Memories are short facts that carry across conversations: your name, how you like answers, where a project lives. On every run Noira puts the memories most relevant to the task, then the newest, in front of the model (up to 14). It saves new ones with <code>remember</code> when you tell it something worth keeping, and you can add or forget them yourself in the panel or with <code>noira memory</code>.</p>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="launch">
+      <h2>Launch tools<a class="anchor" href="#launch" aria-label="Link to this section">#</a></h2>
+      <p><b>scan_launches</b> reads the launch feed of a Noira site (<code>GET /api/launches</code>), where each launch is scored on seven checks: dev wallet share, liquidity lock, holder concentration, sniper and bundle activity, contract risk, early volume quality, and socials. A launch is <em>signal</em> only when all seven pass. Point the agent at a feed with <code>feedUrl</code> in Settings. The public feed is a demo until the chain indexer is connected.</p>
+      <p><b>build_site</b> writes a complete single-file website (inline CSS and JavaScript, responsive, accessible) from one sentence into the workspace. <code>noira build</code> does the same from the terminal, into the current folder.</p>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="config">
+      <h2>Configuration<a class="anchor" href="#config" aria-label="Link to this section">#</a></h2>
+      <p><code>~/.noira/config.json</code> is created on first run. Most fields can be changed in the panel; restart the gateway after editing the file by hand.</p>
+      <table>
+        <thead><tr><th>Field</th><th>Default</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>provider</code></td><td><code>anthropic</code></td><td><code>anthropic</code> or <code>openai</code> (any OpenAI-compatible endpoint, Ollama included).</td></tr>
+          <tr><td><code>model</code></td><td><code>claude-opus-5-5</code></td><td>The model name for that provider.</td></tr>
+          <tr><td><code>apiKey</code></td><td>empty</td><td>The saved key. The environment variables win when set.</td></tr>
+          <tr><td><code>baseUrl</code></td><td>empty</td><td>The endpoint for <code>openai</code>, e.g. <code>http://127.0.0.1:11434/v1</code>.</td></tr>
+          <tr><td><code>host</code> · <code>port</code></td><td><code>127.0.0.1</code> · <code>18790</code></td><td>Where the gateway listens. <code>--remote</code> overrides the host for one run.</td></tr>
+          <tr><td><code>token</code></td><td>random</td><td>The secret every API call needs. Delete the line and restart to get a new one.</td></tr>
+          <tr><td><code>policy</code></td><td><code>{}</code></td><td>Per-tool permissions, e.g. <code>{"run_shell": "block"}</code>. Missing tools use their default.</td></tr>
+          <tr><td><code>allowedRoots</code></td><td><code>[]</code></td><td>Extra folders the file tools may use.</td></tr>
+          <tr><td><code>feedUrl</code></td><td><code>http://localhost:5173</code></td><td>The Noira site whose launch feed <code>scan_launches</code> reads.</td></tr>
+          <tr><td><code>approvalTimeoutMin</code></td><td><code>720</code></td><td>Minutes before an unanswered approval counts as denied.</td></tr>
+        </tbody>
+      </table>
+      <p>Environment variables: <code>NOIRA_HOME</code> (data folder), <code>ANTHROPIC_API_KEY</code>, <code>OPENAI_API_KEY</code>.</p>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="api">
+      <h2>HTTP API<a class="anchor" href="#api" aria-label="Link to this section">#</a></h2>
+      <p>The CLI, the panel and the apps all use this API, and so can your own scripts. Send the token in an <code>x-noira-token</code> header (or <code>?token=</code> for the event stream). Bodies are JSON.</p>
+      <div class="code"><pre><code>curl -H "x-noira-token: $TOKEN" http://127.0.0.1:18790/api/status
+
+curl -X POST -H "x-noira-token: $TOKEN" -H "content-type: application/json" \
+  -d '{"task":"List the files in my workspace"}' http://127.0.0.1:18790/api/runs</code></pre><button class="copy-code" type="button">Copy</button></div>
+      <table>
+        <thead><tr><th>Endpoint</th><th>What it does</th></tr></thead>
+        <tbody>
+          <tr><td><code>GET /api/status</code></td><td>Version, model, active runs, approvals, jobs, memories, workspace.</td></tr>
+          <tr><td><code>GET /api/events</code></td><td>Server-sent events: <code>run.started</code>, <code>run.text</code>, <code>run.step</code>, <code>run.finished</code>, <code>approval.requested</code>, <code>approval.resolved</code>, <code>jobs.changed</code>, <code>memory.changed</code>, <code>config.changed</code>.</td></tr>
+          <tr><td><code>POST /api/runs</code></td><td>Starts a run: <code>{ task, history? }</code>. Returns the run with its id.</td></tr>
+          <tr><td><code>GET /api/runs</code> · <code>GET /api/runs/:id</code></td><td>Recent runs, or one run with every step.</td></tr>
+          <tr><td><code>POST /api/runs/:id/stop</code></td><td>Stops a running task.</td></tr>
+          <tr><td><code>GET /api/approvals</code> · <code>POST /api/approvals/:id</code></td><td>Waiting approvals; answer with <code>{ decision: "allow" | "deny" | "always" }</code>.</td></tr>
+          <tr><td><code>GET</code> · <code>POST /api/jobs</code></td><td>List jobs, or add one: <code>{ cron, task, name? }</code>.</td></tr>
+          <tr><td><code>PATCH</code> · <code>DELETE /api/jobs/:id</code> · <code>POST /api/jobs/:id/run</code></td><td>Change (e.g. <code>{ enabled: false }</code>), delete, or run a job now.</td></tr>
+          <tr><td><code>GET</code> · <code>POST /api/memory</code> · <code>DELETE /api/memory/:id</code></td><td>Memories: list, add <code>{ text }</code>, forget.</td></tr>
+          <tr><td><code>GET /api/files?path=</code></td><td>A workspace folder listing, or a file's content.</td></tr>
+          <tr><td><code>GET /api/tools</code></td><td>Every tool with its current permission.</td></tr>
+          <tr><td><code>GET</code> · <code>PUT /api/config</code></td><td>The config without the key or token; update model, key, feed, timeout or policy.</td></tr>
+          <tr><td><code>POST /api/shutdown</code></td><td>Stops the gateway.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="security">
+      <h2>Security<a class="anchor" href="#security" aria-label="Link to this section">#</a></h2>
+      <ul class="dlist">
+        <li><b>Local only by default.</b> The gateway listens on <code>127.0.0.1</code>, and requests that name any other host are refused, so a web page cannot reach it through a DNS trick.</li>
+        <li><b>A token on every call</b>, even from this machine. The panel receives it inside its own page, which other sites cannot read.</li>
+        <li><b>Remote mode is for private networks.</b> <code>--remote</code> listens on every interface for the phone; use Tailscale or your home network, never a port forward.</li>
+        <li><b>It asks before it acts.</b> Files, shell, web requests, jobs and site builds wait for your yes unless you allow them.</li>
+        <li><b>Your data stays yours.</b> Keys, memory, runs and files live in <code>~/.noira</code>. Model calls go to the provider you chose; with Ollama they never leave the machine.</li>
+      </ul>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="troubleshooting">
+      <h2>Troubleshooting<a class="anchor" href="#troubleshooting" aria-label="Link to this section">#</a></h2>
+      <dl class="faq">
+        <div><dt><code>noira</code> is not recognized, or "running scripts is disabled" on Windows</dt><dd>Use <code>noira.cmd</code> and <code>npm.cmd</code>, or run <code>Set-ExecutionPolicy -Scope CurrentUser RemoteSigned</code> once and open a new terminal.</dd></div>
+        <div><dt>"Port 18790 is busy"</dt><dd>Another gateway is already running, maybe from the desktop app. <code>noira status</code> shows it; <code>noira stop</code> stops it.</dd></div>
+        <div><dt>"The model rejected the API key"</dt><dd>Run <code>noira onboard</code> again or fix it in Settings. Check that no old <code>ANTHROPIC_API_KEY</code> / <code>OPENAI_API_KEY</code> in your environment is overriding the saved key.</dd></div>
+        <div><dt>The panel says "Wrong token"</dt><dd>Open it from <code>noira panel</code> so the page carries the current token, or reconnect the phone app with the token from <code>noira pair</code>.</dd></div>
+        <div><dt>A job did not run</dt><dd>Jobs only run while the gateway is up and a model is set up. Check the job's next run in <code>noira jobs</code> and the gateway log with <code>noira logs</code>.</dd></div>
+        <div><dt>The phone cannot connect</dt><dd>Start the gateway with <code>--remote</code>, make sure both devices are on the same Tailscale network, and use the <code>100.</code> address from <code>noira pair</code>.</dd></div>
+      </dl>
+    </section>
+
+    <!-- ============================================================ -->
+    <section id="token">
+      <h2>$NOIRA<a class="anchor" href="#token" aria-label="Link to this section">#</a></h2>
+      <p>$NOIRA is the Noira token. Holding it opens the full agent on this site; fees buy it back and burn it. The contract address is published only on <a href="/#token">the home page</a>; until then it reads "Coming soon". Nothing in these docs is an offer or investment advice.</p>
+    </section>
+
+    <footer class="doc-foot">
+      <p>Noira is a self-hosted AI agent. It asks before it acts and runs where you run it.</p>
+      <p><a href="/">Home</a> · <a href="/#download">Download</a> · <a href="https://www.npmjs.com/package/@noirarh/noira" rel="noopener">npm</a></p>
+    </footer>
+  </main>
+</div>
+
+<script type="module" src="/src/docs.ts"></script>
+</body>
+</html>

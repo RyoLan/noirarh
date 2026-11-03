@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="g5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#e4d8ff"/></linearGradient>
+    <linearGradient id="c5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#b49bff"/><stop offset="1" stop-color="#8b5cff"/></linearGradient>
+  </defs>
+  <rect x="112" y="92" width="58" height="328" rx="29" fill="url(#g5)"/>
+  <rect x="342" y="92" width="58" height="328" rx="29" fill="url(#g5)"/>
+  <!-- the diagonal of the N is a crescent from the top of the left pillar to the foot of the right one -->
+  <path d="M141 104 A222 222 0 0 0 371 408 A330 330 0 0 1 141 104 Z" fill="url(#c5)"/>
+</svg>

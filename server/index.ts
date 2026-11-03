@@ -203,6 +203,11 @@ const vite = PROD ? null : await (await import('vite')).createServer({ root: ROO
 
 createHttpServer(async (req, res) => {
   const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
+  // /docs is the short address of the documentation page
+  if (url.pathname === '/docs' || url.pathname === '/docs/') {
+    url.pathname = '/docs.html';
+    req.url = `/docs.html${url.search}`;
+  }
   try {
     if (url.pathname.startsWith('/api/')) {
       if (!(await api(req, res, url))) json(res, 404, { error: 'Not found' });

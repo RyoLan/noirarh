@@ -1,6 +1,6 @@
 {
   "name": "@noirarh/noira",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Noira: a self-hosted AI agent. One gateway on your own machine, a CLI and a control panel. It asks before it acts.",
   "type": "module",
   "bin": {

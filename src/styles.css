@@ -700,3 +700,4 @@ html:not(.js) .loader { display: none; }
   .start-code { font-size: 12.5px; }
   .start-foot { flex-direction: column; align-items: flex-start; }
 }
+.start-note a { color: var(--lav); text-decoration: underline; text-underline-offset: 3px; }
