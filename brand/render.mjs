@@ -1,11 +1,12 @@
-// Exports each concept's X avatar (400x400) and X header (1500x500) as PNG with headless Chrome or Edge.
+// Exports the final Noira avatar and header, then each concept's X avatar (400x400) and X header (1500x500), as PNG
+// with headless Chrome or Edge.
 // node brand/render.mjs   (set CHROME=path/to/chrome if it is not found)
 import { spawn } from 'node:child_process';
 import { existsSync, mkdtempSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { avatarHtml, CONCEPTS, headerHtml } from './logos.mjs';
+import { avatarHtml, CONCEPTS, FINAL, finalAvatarHtml, finalHeaderHtml, headerHtml } from './logos.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const browser = [process.env.CHROME,
@@ -41,6 +42,8 @@ async function shoot(html, w, h, file) {
   console.log(path.relative(here, file));
 }
 
+await shoot(finalAvatarHtml(FINAL), 400, 400, path.join(here, 'logos', 'noira-avatar.png'));
+await shoot(finalHeaderHtml(FINAL), 1500, 500, path.join(here, 'logos', 'noira-header.png'));
 for (const c of CONCEPTS) {
   await shoot(avatarHtml(c), 400, 400, path.join(here, 'logos', `${c.id}-avatar.png`));
   await shoot(headerHtml(c), 1500, 500, path.join(here, 'logos', `${c.id}-header.png`));

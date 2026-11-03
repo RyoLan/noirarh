@@ -1,9 +1,11 @@
-// Draws the Noira app icon (a lavender crescent on a deep violet tile) as PNGs, with no image libraries.
+// Draws the Noira app icon (the signal mark: lavender bars that form a crescent, on a deep violet tile) as PNGs,
+// with no image libraries.
 // node agent/scripts/make-icons.mjs
 import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { deflateSync } from 'node:zlib';
+import { LARGE, SMALL, signalBars } from '../../brand/signal.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -31,8 +33,19 @@ function png(size, pixel) {
   return Buffer.concat([Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]), chunk('IHDR', ihdr), chunk('IDAT', deflateSync(raw, { level: 9 })), chunk('IEND', Buffer.alloc(0))]);
 }
 
+/** The mark's bars in unit space, centred and scaled so its widest extent is `span` of the icon. */
+function markBars(preset, span) {
+  const bars = signalBars(preset), h = preset.sw / 2;
+  const x0 = Math.min(...bars.map(b => b.x1)) - h, x1 = Math.max(...bars.map(b => b.x2)) + h;
+  const y0 = Math.min(...bars.map(b => b.y)) - h, y1 = Math.max(...bars.map(b => b.y)) + h;
+  const k = span / Math.max(x1 - x0, y1 - y0), ox = 0.5 - (x0 + x1) / 2 * k, oy = 0.5 - (y0 + y1) / 2 * k;
+  return { half: h * k, bars: bars.map(b => ({ x1: b.x1 * k + ox, x2: b.x2 * k + ox, y: b.y * k + oy, noise: b.noise })) };
+}
+
 /** Samples the design in unit space (0..1); `full` fills the square for maskable/adaptive icons. */
 function icon(size, full) {
+  // small icons get the thick 8-row mark; maskable ones keep it inside the safe zone
+  const { half, bars } = markBars(size < 128 ? SMALL : LARGE, full ? 0.54 : 0.62);
   const S = 4; // supersampling
   const lerp = (a, b, t) => a + (b - a) * t;
   return png(size, (px, py) => {
@@ -46,12 +59,18 @@ function icon(size, full) {
       // tile: deep violet with a glow at the top
       const glow = Math.max(0, 1 - Math.hypot(x - 0.62, y - 0.18) / 0.75);
       let cr = lerp(14, 70, glow), cg = lerp(8, 34, glow), cb = lerp(34, 160, glow);
-      // crescent: inside the big disc, outside the offset one
-      const inA = Math.hypot(x - 0.47, y - 0.52) < 0.27;
-      const inB = Math.hypot(x - 0.58, y - 0.43) < 0.23;
-      if (inA && !inB) { cr = 228; cg = 216; cb = 255; }
+      // bars: lavender crescent rows with a soft halo, dimmer violet noise to their left
+      let main = Infinity, noise = Infinity;
+      for (const bar of bars) {
+        const dy = y - bar.y;
+        if (Math.abs(dy) > half + 0.05) continue;
+        const d = Math.hypot(Math.max(bar.x1 - x, 0, x - bar.x2), dy) - half;
+        if (bar.noise) noise = Math.min(noise, d); else main = Math.min(main, d);
+      }
+      if (main < 0) { cr = 228; cg = 216; cb = 255; }
+      else if (noise < 0) { cr = lerp(cr, 139, 0.6); cg = lerp(cg, 92, 0.6); cb = lerp(cb, 255, 0.6); }
       else {
-        const halo = Math.max(0, 1 - Math.abs(Math.hypot(x - 0.47, y - 0.52) - 0.27) / 0.06) * (inB ? 0 : 0.35);
+        const halo = Math.max(0, 1 - main / 0.05) * 0.3;
         cr = lerp(cr, 180, halo); cg = lerp(cg, 150, halo); cb = lerp(cb, 255, halo);
       }
       r += cr; g += cg; b += cb; a += 255;

@@ -3,6 +3,7 @@
 import { mkdirSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { LARGE, signalLines } from './signal.mjs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const LAV = '#e4d8ff', VIO = '#8b5cff', DEEP = '#0b0618';
@@ -67,23 +68,9 @@ export const CONCEPTS = [
     id: '04-signal',
     name: 'Signal',
     idea: 'Lines of noise that only become a crescent where the signal is: Noira filtering every launch down to what is real.',
-    svg: (() => {
-      const cx = 240, cy = 262, r = 160, bx = cx + r * 0.42, by = cy - r * 0.36, br = r * 0.82;
-      const rows = [];
-      for (let y = cy - r + 10, i = 0; y < cy + r - 4; y += 20, i++) {
-        const half = Math.sqrt(Math.max(0, r * r - (y - cy) ** 2));
-        let x1 = cx - half, x2 = cx + half;
-        const bh = Math.sqrt(Math.max(0, br * br - (y - by) ** 2));
-        if (bh > 0) x2 = Math.min(x2, bx - bh);
-        if (x2 - x1 < 6) continue;
-        const noise = 36 + ((i * 53) % 70);
-        rows.push(`<line x1="${(x1 - noise).toFixed(1)}" y1="${y}" x2="${(x1 - 14).toFixed(1)}" y2="${y}" stroke="${VIO}" stroke-opacity=".35"/>`);
-        rows.push(`<line x1="${x1.toFixed(1)}" y1="${y}" x2="${x2.toFixed(1)}" y2="${y}" stroke="${LAV}"/>`);
-      }
-      return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-  <g stroke-width="11" stroke-linecap="round" transform="translate(44 0)">${rows.join('\n    ')}</g>
-</svg>`;
-    })(),
+    svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <g stroke-width="${LARGE.sw}" stroke-linecap="round">${signalLines(LARGE, { main: LAV, dim: VIO, dimOpacity: 0.35 })}</g>
+</svg>`,
   },
   {
     id: '05-noir-monogram',
@@ -125,6 +112,72 @@ html,body{margin:0;width:1500px;height:500px;overflow:hidden;background:${DEEP};
 <div class="row">${c.svg}<div><div class="wm">NOIRA</div><div class="tag">A self-hosted AI agent that works the night shift</div></div></div>
 <div class="tick">$NOIRA</div></div></body></html>`;
 
+/** The chosen mark (concept 04), exported as brand/logos/noira-*. */
+export const FINAL = { ...CONCEPTS.find(c => c.id === '04-signal'), id: 'noira', name: 'Noira' };
+
+/**
+ * A night-sky backdrop so the mark never sits on a flat tile: violet glow, stars, orbit rings around the mark,
+ * faint scanlines that echo its bars, a planet limb along the bottom, vignette and grain. (mx,my) is the mark centre.
+ */
+function backdrop(w, h, { mx, my, rings, limb, stars }) {
+  let seed = 7;
+  const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+  const dots = Array.from({ length: stars }, () => {
+    const x = rnd() * w, y = rnd() * (limb.cy - limb.r + 20), r = 0.4 + rnd() ** 3 * 1.4, o = 0.2 + rnd() * 0.6;
+    return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="#efe8ff" opacity="${o.toFixed(2)}"/>`;
+  }).join('');
+  const ringEls = rings.map((r, i) => `<circle cx="${mx}" cy="${my}" r="${r}" fill="none" stroke="#b9a2ff" stroke-opacity="${(0.13 - i * 0.03).toFixed(2)}" stroke-width="1"${i === 1 ? ' stroke-dasharray="2 7"' : ''}/>`).join('');
+  const sat = rings[1] ?? rings[0];
+  return `<svg class="bg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none">
+  <defs>
+    <radialGradient id="bgBase" cx="${mx / w}" cy="${my / h}" r="${Math.max(w, h) / Math.min(w, h) * 0.75}">
+      <stop offset="0" stop-color="#2f1a7a"/><stop offset=".45" stop-color="#160b3d"/><stop offset="1" stop-color="#06030e"/>
+    </radialGradient>
+    <radialGradient id="bgGlow"><stop offset="0" stop-color="#8b5cff" stop-opacity=".55"/><stop offset="1" stop-color="#8b5cff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="bgPlanet" cx=".5" cy="0" r=".7"><stop offset="0" stop-color="#2a1866"/><stop offset=".35" stop-color="#110830"/><stop offset="1" stop-color="#05020c"/></radialGradient>
+    <radialGradient id="bgVig" cx=".5" cy=".45" r=".75"><stop offset=".55" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".6"/></radialGradient>
+    <pattern id="bgScan" width="${w}" height="6" patternUnits="userSpaceOnUse"><rect width="${w}" height="1.4" fill="#c9b6ff" opacity=".045"/></pattern>
+    <filter id="bgLimb" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="${(h / 40).toFixed(1)}"/></filter>
+    <filter id="bgGrain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .55 0"/></filter>
+  </defs>
+  <rect width="${w}" height="${h}" fill="url(#bgBase)"/>
+  <rect width="${w}" height="${h}" fill="url(#bgScan)"/>
+  ${dots}
+  <circle cx="${mx}" cy="${my}" r="${rings[0] * 1.15}" fill="url(#bgGlow)"/>
+  ${ringEls}
+  <circle cx="${(mx + sat * Math.cos(-0.6)).toFixed(1)}" cy="${(my + sat * Math.sin(-0.6)).toFixed(1)}" r="${(h / 130).toFixed(1)}" fill="#e4d8ff"/>
+  <circle cx="${limb.cx}" cy="${limb.cy}" r="${limb.r}" fill="none" stroke="#9d78ff" stroke-width="${(h / 25).toFixed(1)}" opacity=".7" filter="url(#bgLimb)"/>
+  <circle cx="${limb.cx}" cy="${limb.cy}" r="${limb.r}" fill="url(#bgPlanet)"/>
+  <circle cx="${limb.cx}" cy="${limb.cy}" r="${limb.r}" fill="none" stroke="#efe6ff" stroke-width="${(h / 220).toFixed(1)}" opacity=".85"/>
+  <rect width="${w}" height="${h}" fill="url(#bgVig)"/>
+  <rect width="${w}" height="${h}" filter="url(#bgGrain)" opacity=".09"/>
+</svg>`;
+}
+
+/** The final mark on the night-sky tile, for the X avatar (X crops it to a circle). */
+export const finalAvatarHtml = c => `<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{margin:0;width:400px;height:400px;background:${DEEP};}
+.t{position:relative;width:400px;height:400px;overflow:hidden;}
+.bg{position:absolute;inset:0;width:100%;height:100%;}
+.t>svg:not(.bg){position:absolute;left:84px;top:52px;width:260px;height:260px;filter:drop-shadow(0 0 18px rgba(170,130,255,.65));}
+</style></head><body><div class="t">${backdrop(400, 400, { mx: 200, my: 185, rings: [118, 150, 186], limb: { cx: 200, cy: 1010, r: 660 }, stars: 70 })}${c.svg}</div></body></html>`;
+
+/** The final X header (1500x500): the same sky, mark and wordmark on the left, planet limb along the bottom. */
+export const finalHeaderHtml = c => `<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600&family=Inter:wght@500&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;width:1500px;height:500px;overflow:hidden;background:${DEEP};font-family:Inter,sans-serif;}
+.h{position:relative;width:1500px;height:500px;overflow:hidden;}
+.bg{position:absolute;inset:0;width:100%;height:100%;}
+.row{position:absolute;left:290px;top:96px;display:flex;align-items:center;gap:36px;}
+.row svg{width:210px;height:210px;filter:drop-shadow(0 0 22px rgba(170,130,255,.65));}
+.wm{font:600 112px/1 Orbitron,sans-serif;letter-spacing:.18em;color:#fbf9ff;text-shadow:0 0 30px rgba(200,180,255,.55);}
+.tag{margin-top:18px;font-size:30px;letter-spacing:.04em;color:#cbc1e8;}
+.tick{position:absolute;right:56px;top:40px;font:600 26px Orbitron,sans-serif;letter-spacing:.12em;color:#b597ff;}
+</style></head><body><div class="h">${backdrop(1500, 500, { mx: 395, my: 200, rings: [128, 168, 214], limb: { cx: 750, cy: 2330, r: 1900 }, stars: 160 })}
+<div class="row">${c.svg}<div><div class="wm">NOIRA</div><div class="tag">A self-hosted AI agent that works the night shift</div></div></div>
+<div class="tick">$NOIRA</div></div></body></html>`;
+
 function board() {
   const card = c => `<article class="card">
     <div class="stage">${c.svg}</div>
@@ -158,7 +211,8 @@ h2{margin:0 0 6px;font-size:24px}.body p{margin:0;color:#cbc1e8}
 .on-light{display:grid;place-items:center;width:56px;height:56px;border-radius:14px;background:#f4f0ff}.on-light svg{width:40px;height:40px;filter:invert(.92) hue-rotate(180deg)}
 .lockup{display:flex;align-items:center;gap:12px;padding:10px 18px;border-radius:999px;background:rgba(255,255,255,.04)}.lockup svg{width:34px;height:34px}.lockup b{font:600 22px Orbitron,sans-serif;letter-spacing:.14em}
 .header{width:100%;border-radius:14px;display:block}.files{margin-top:10px!important;font-size:13px;color:var(--mut)!important}
-@media(max-width:820px){.card{grid-template-columns:1fr}}
+.final{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:center}.final img{display:block;width:100%;border-radius:16px}.final .fa{border-radius:50%}
+@media(max-width:820px){.card,.final{grid-template-columns:1fr}.final .fa{width:160px}}
 </style></head><body><main>
 <h1>Noira · logo concepts</h1>
 <p class="lede">Five directions for the site and the X account. Each shows the mark, an X profile picture (cropped to a circle), favicon sizes, a light-background check, the header lockup and an X header banner.</p>
@@ -169,6 +223,7 @@ ${CONCEPTS.map(card).join('\n')}
 if (process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1])) {
   mkdirSync(path.join(here, 'logos'), { recursive: true });
   for (const c of CONCEPTS) writeFileSync(path.join(here, 'logos', `${c.id}.svg`), `${c.svg}\n`);
+  writeFileSync(path.join(here, 'logos', 'noira-logo.svg'), `${FINAL.svg}\n`);
   writeFileSync(path.join(here, 'index.html'), board());
-  console.log(`wrote ${CONCEPTS.length} SVGs and brand/index.html`);
+  console.log(`wrote ${CONCEPTS.length + 1} SVGs and brand/index.html`);
 }
