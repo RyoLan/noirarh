@@ -1,6 +1,6 @@
 {
   "name": "noira-site",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Noira ($NOIRA) website: landing page, launch scanner, Ask Noira and the web vibecode builder.",
   "type": "module",
@@ -21,7 +21,8 @@
     "check": "tsx scripts/check-agent-tools.ts",
     "agent:build": "npm run build -w agent",
     "desktop:build": "npm run dist -w desktop",
-    "mobile:sync": "npm run sync -w mobile"
+    "mobile:sync": "npm run sync -w mobile",
+    "downloads:fetch": "node scripts/fetch-downloads.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.4.0",

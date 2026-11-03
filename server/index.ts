@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import { createServer as createHttpServer, type IncomingMessage, type ServerResponse } from 'node:http';
-import { existsSync } from 'node:fs';
+import { createReadStream, existsSync } from 'node:fs';
 import { readFile, stat } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
@@ -150,7 +150,46 @@ async function api(req: IncomingMessage, res: ServerResponse, url: URL): Promise
   // The page's Vibecode window is a scripted replay, and real builds happen in the
   // user's own agent (`noira build`), so the site no longer spends API credit on builds.
 
+  if (route === 'GET /api/downloads') {
+    json(res, 200, await listDownloads());
+    return true;
+  }
+
   return false;
+}
+
+/* ---------- installers, served from this site ---------- */
+// Files live in ./downloads (or DOWNLOADS_DIR). `npm run downloads:fetch` fills it from the
+// release build, or copy the installers in by hand. Only these names are ever served.
+const DOWNLOADS = path.resolve(ROOT, process.env.DOWNLOADS_DIR ?? 'downloads');
+const INSTALLERS: Record<string, { os: string; type: string }> = {
+  'Noira-Setup.exe': { os: 'windows', type: 'application/vnd.microsoft.portable-executable' },
+  'Noira-mac.dmg': { os: 'mac', type: 'application/x-apple-diskimage' },
+  'Noira-android.apk': { os: 'android', type: 'application/vnd.android.package-archive' },
+};
+
+async function listDownloads() {
+  const rows = await Promise.all(Object.entries(INSTALLERS).map(async ([file, meta]) => {
+    const s = await stat(path.join(DOWNLOADS, file)).catch(() => null);
+    return { file, os: meta.os, available: Boolean(s?.isFile()), size: s?.size ?? 0, updated: s?.mtimeMs ?? 0 };
+  }));
+  return { version: process.env.npm_package_version ?? null, files: rows };
+}
+
+async function serveDownload(req: IncomingMessage, res: ServerResponse, name: string) {
+  const meta = INSTALLERS[name];
+  const file = path.join(DOWNLOADS, name);
+  const s = meta ? await stat(file).catch(() => null) : null;
+  if (!meta || !s?.isFile()) { json(res, 404, { error: 'This installer is not available yet.' }); return; }
+  res.writeHead(200, {
+    'content-type': meta.type,
+    'content-length': s.size,
+    'content-disposition': `attachment; filename="${name}"`,
+    'cache-control': 'public, max-age=300',
+    'x-content-type-options': 'nosniff',
+  });
+  if (req.method === 'HEAD') { res.end(); return; }
+  createReadStream(file).pipe(res);
 }
 
 /* ---------- static files (production) ---------- */
@@ -186,6 +225,10 @@ createHttpServer(async (req, res) => {
   try {
     if (url.pathname.startsWith('/api/')) {
       if (!(await api(req, res, url))) json(res, 404, { error: 'Not found' });
+      return;
+    }
+    if (url.pathname.startsWith('/downloads/')) {
+      await serveDownload(req, res, decodeURIComponent(url.pathname.slice('/downloads/'.length)));
       return;
     }
     if (vite) vite.middlewares(req, res);

@@ -1,6 +1,6 @@
 {
   "name": "noira-desktop",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "private": true,
   "description": "Noira for Windows and macOS: runs the gateway on this computer and opens the panel in its own window.",
   "author": "Noira",
