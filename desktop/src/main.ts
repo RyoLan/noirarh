@@ -1,7 +1,7 @@
 import { app, BrowserWindow, Menu, nativeImage, shell, Tray } from 'electron';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { loadConfig, paths, startGateway, type Gateway } from 'noira';
+import { loadConfig, paths, startGateway, type Gateway } from '@noirarh/noira';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const icon = nativeImage.createFromPath(path.join(here, 'icon.png'));

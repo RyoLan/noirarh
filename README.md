@@ -3,10 +3,10 @@
 This repository holds two things that share one brand:
 
 1. **The website** (root): the landing page with the 3D hero, the live launch scanner, Ask Noira and the web vibecode builder, plus the Download section.
-2. **The Noira agent** (`agent/`, published to npm as `noira`): a self-hosted AI agent with a local gateway, a CLI and a control panel, packaged for Windows (`desktop/`), macOS (`desktop/`) and Android (`mobile/`).
+2. **The Noira agent** (`agent/`, published to npm as `@noirarh/noira`): a self-hosted AI agent with a local gateway, a CLI and a control panel, packaged for Windows (`desktop/`), macOS (`desktop/`) and Android (`mobile/`).
 
 ```
-agent/     npm package "noira": gateway, CLI, tools, scheduler, memory, control panel (agent/panel)
+agent/     npm package "@noirarh/noira": gateway, CLI, tools, scheduler, memory, control panel (agent/panel)
 desktop/   Electron app: runs the gateway, opens the panel, lives in the tray / menu bar
 mobile/    Capacitor Android app: the panel as a client for a remote gateway
 server/    website server: launch feed, Ask Noira, web builder, GET /api/launches
@@ -55,7 +55,7 @@ npm run apk -w mobile             # needs JDK 21 and the Android SDK
 
 Optional repository secrets:
 
-- `NPM_TOKEN`: the workflow also publishes the `noira` package to npm.
+- `NPM_TOKEN`: an Automation token from the `noirarh` npm account; the workflow then publishes `@noirarh/noira`.
 - `CSC_LINK`, `CSC_KEY_PASSWORD`: code signing. Without them, Windows shows a SmartScreen warning and macOS asks the user to open the app from System Settings.
 - `APPLE_ID`, `APPLE_APP_SPECIFIC_PASSWORD`, `APPLE_TEAM_ID`: macOS notarization.
 

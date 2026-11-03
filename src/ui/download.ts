@@ -6,8 +6,8 @@ export const GITHUB_REPO = '';
 type Os = 'windows' | 'mac' | 'android' | 'linux';
 
 const COMMANDS = {
-  win: 'npm.cmd install -g noira\nnoira.cmd onboard    # pick Claude, an OpenAI-compatible model or Ollama\nnoira.cmd start      # the gateway, in the background\nnoira.cmd            # chat with it · noira.cmd panel opens the control panel',
-  unix: 'npm install -g noira\nnoira onboard        # pick Claude, an OpenAI-compatible model or Ollama\nnoira start          # the gateway, in the background\nnoira                # chat with it · noira panel opens the control panel',
+  win: 'npm.cmd install -g @noirarh/noira\nnoira.cmd onboard    # pick Claude, an OpenAI-compatible model or Ollama\nnoira.cmd start      # the gateway, in the background\nnoira.cmd            # chat with it · noira.cmd panel opens the control panel',
+  unix: 'npm install -g @noirarh/noira\nnoira onboard        # pick Claude, an OpenAI-compatible model or Ollama\nnoira start          # the gateway, in the background\nnoira                # chat with it · noira panel opens the control panel',
 };
 
 function detectOs(): Os {
@@ -44,8 +44,8 @@ export function setupDownloads() {
 
   // PowerShell blocks npm.ps1 on many machines, so Windows gets npm.cmd
   if (os === 'windows') {
-    $$('.npm-cmd').forEach(c => { c.textContent = 'npm.cmd install -g noira'; });
-    $$<HTMLButtonElement>('.npm-copy').forEach(b => { b.dataset.copy = 'npm.cmd install -g noira'; });
+    $$('.npm-cmd').forEach(c => { c.textContent = 'npm.cmd install -g @noirarh/noira'; });
+    $$<HTMLButtonElement>('.npm-copy').forEach(b => { b.dataset.copy = 'npm.cmd install -g @noirarh/noira'; });
   }
 
   const code = $('#startCode');

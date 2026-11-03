@@ -3,10 +3,10 @@
 A self-hosted AI agent that runs on your own computer or server. One gateway, a CLI and a control panel. It asks before it acts, and it keeps working on a schedule while you sleep.
 
 ```bash
-npm install -g noira          # Windows PowerShell: npm.cmd install -g noira
-noira onboard                 # pick Claude, an OpenAI-compatible model, or Ollama
-noira start                   # the gateway, in the background
-noira                         # chat with it
+npm install -g @noirarh/noira   # Windows PowerShell: npm.cmd install -g @noirarh/noira
+noira onboard                   # pick Claude, an OpenAI-compatible model, or Ollama
+noira start                     # the gateway, in the background
+noira                           # chat with it
 ```
 
 Needs Node 22 or newer.
