@@ -1,0 +1,7 @@
+noira.
+
+an ai agent that watches every pons launch and tells you what’s real.
+
+runs on your machine. uses your model.
+
+noirarh.xyz

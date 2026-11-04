@@ -1,0 +1,7 @@
+how $NOIRA works:
+
+hold 0.1% of supply, every detector unlocks
+fees buy back and burn, tx posted every time
+top 5 wallets get a share
+
+no wallet? still 3 free builds a day.

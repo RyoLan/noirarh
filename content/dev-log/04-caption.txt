@@ -1,0 +1,5 @@
+bring your own key.
+
+claude, any openai-compatible api, or fully local with ollama.
+
+keys stay on your machine in ~/.noira.

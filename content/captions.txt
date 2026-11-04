@@ -320,3 +320,143 @@ Let the noise collapse. Keep what’s real.
 
 $NOIRA
 ------------------------------------------------
+
+================================================
+DEV LOG  (content/dev-log)
+================================================
+
+[DEV LOG 01]
+(When: anytime)
+(Note: Good first post; pin it until the CA is out.)
+noira.
+
+an ai agent that watches every pons launch and tells you what’s real.
+
+runs on your machine. uses your model.
+
+noirarh.xyz
+------------------------------------------------
+
+[DEV LOG 02]  (text only)
+(When: anytime)
+npm install -g @noirarh/noira
+noira onboard
+
+node 22+. that’s it.
+------------------------------------------------
+
+[DEV LOG 03]
+(When: anytime)
+every pons launch gets 7 checks the second it lands.
+
+dev wallet, lp lock, holders, snipers, contract, volume, socials.
+
+7/7 = signal. the rest is noise.
+
+(demo feed on the site)
+------------------------------------------------
+
+[DEV LOG 04]  (text only)
+(When: anytime)
+bring your own key.
+
+claude, any openai-compatible api, or fully local with ollama.
+
+keys stay on your machine in ~/.noira.
+------------------------------------------------
+
+[DEV LOG 05]
+(When: anytime)
+6 detectors, one place.
+
+scanner. wallet x-ray. entanglement map. sniper radar. liquidity pulse. ask noira.
+------------------------------------------------
+
+[DEV LOG 06]  (text only)
+(When: anytime)
+it’s an agent, not an autopilot.
+
+it watches all night, writes the brief, then waits for your yes before it acts.
+------------------------------------------------
+
+[DEV LOG 07]
+(When: anytime)
+what a run looks like.
+
+schedule fires, noira calls its tools, writes its files, then stops and waits for your yes.
+
+full simulation on noirarh.xyz
+------------------------------------------------
+
+[DEV LOG 08]
+(When: anytime)
+windows and mac builds are up.
+
+android connects to the gateway you run at home.
+
+noirarh.xyz
+------------------------------------------------
+
+[DEV LOG 09]
+(When: anytime)
+how $NOIRA works:
+
+hold 0.1% of supply, every detector unlocks
+fees buy back and burn, tx posted every time
+top 5 wallets get a share
+
+no wallet? still 3 free builds a day.
+------------------------------------------------
+
+[DEV LOG 10]  (text only)
+(When: before launch)
+ca will only be posted here and on noirarh.xyz.
+
+anyone dming you a ca is not us.
+------------------------------------------------
+
+[DEV LOG 11]  (text only)
+(When: at launch)
+(Note: Pin this. Replace [CA] with the contract address from /admin.)
+CA : [CA]
+------------------------------------------------
+
+[DEV LOG 12]  (text only)
+(When: at launch)
+(Note: Replace [PONS LINK] with the token page on Pons.)
+we’re live on pons
+
+[PONS LINK]
+------------------------------------------------
+
+[DEV LOG 13]  (text only)
+(When: after every burn)
+(Note: Replace [TX LINK] with the explorer link of that burn transaction.)
+burn trx hash :
+[TX LINK]
+------------------------------------------------
+
+[DEV LOG 14]  (text only)
+(When: while bonding)
+(Note: Only with the real curve progress; attach a screenshot of the Pons page.)
+[X]% to bonding.
+
+dex after that.
+------------------------------------------------
+
+[DEV LOG 15]  (text only)
+(When: when DEX Screener is paid)
+(Note: Attach your own screenshot of the DEX Screener order or token page.)
+dex paid ✅
+
+[DEXSCREENER LINK]
+------------------------------------------------
+
+[DEV LOG 16]  (text only)
+(When: after each top-5 payout)
+(Note: Replace [TX LINK] with the payout transaction(s).)
+top 5 wallets paid.
+
+tx :
+[TX LINK]
+------------------------------------------------

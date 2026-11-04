@@ -1,0 +1,5 @@
+what a run looks like.
+
+schedule fires, noira calls its tools, writes its files, then stops and waits for your yes.
+
+full simulation on noirarh.xyz

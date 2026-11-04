@@ -1,0 +1,5 @@
+windows and mac builds are up.
+
+android connects to the gateway you run at home.
+
+noirarh.xyz

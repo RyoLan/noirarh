@@ -168,4 +168,76 @@ export const FOLDERS = {
       },
     ],
   },
+  // Written the way a dev team posts from its own account: short, lowercase, no hype, and every post shows something
+  // real. `shot` posts are screenshots of a section of the live site (make-content.mjs captures them), the rest are
+  // text only. `when` says when to post it; `note` is for whoever posts it and never goes into the caption.
+  'dev-log': {
+    phase: 'live',
+    posts: [
+      {
+        when: 'anytime', shot: 'top', note: 'Good first post; pin it until the CA is out.',
+        caption: 'noira.\n\nan ai agent that watches every pons launch and tells you what’s real.\n\nruns on your machine. uses your model.\n\nnoirarh.xyz',
+      },
+      {
+        when: 'anytime',
+        caption: 'npm install -g @noirarh/noira\nnoira onboard\n\nnode 22+. that’s it.',
+      },
+      {
+        when: 'anytime', shot: 'scanner', offset: 110,
+        caption: 'every pons launch gets 7 checks the second it lands.\n\ndev wallet, lp lock, holders, snipers, contract, volume, socials.\n\n7/7 = signal. the rest is noise.\n\n(demo feed on the site)',
+      },
+      {
+        when: 'anytime',
+        caption: 'bring your own key.\n\nclaude, any openai-compatible api, or fully local with ollama.\n\nkeys stay on your machine in ~/.noira.',
+      },
+      {
+        when: 'anytime', shot: 'detectors',
+        caption: '6 detectors, one place.\n\nscanner. wallet x-ray. entanglement map. sniper radar. liquidity pulse. ask noira.',
+      },
+      {
+        when: 'anytime',
+        caption: 'it’s an agent, not an autopilot.\n\nit watches all night, writes the brief, then waits for your yes before it acts.',
+      },
+      {
+        when: 'anytime', shot: 'vibecode', offset: 120, wait: 22000,
+        caption: 'what a run looks like.\n\nschedule fires, noira calls its tools, writes its files, then stops and waits for your yes.\n\nfull simulation on noirarh.xyz',
+      },
+      {
+        when: 'anytime', shot: 'download',
+        caption: 'windows and mac builds are up.\n\nandroid connects to the gateway you run at home.\n\nnoirarh.xyz',
+      },
+      {
+        when: 'anytime', shot: 'token',
+        caption: 'how $NOIRA works:\n\nhold 0.1% of supply, every detector unlocks\nfees buy back and burn, tx posted every time\ntop 5 wallets get a share\n\nno wallet? still 3 free builds a day.',
+      },
+      {
+        when: 'before launch',
+        caption: 'ca will only be posted here and on noirarh.xyz.\n\nanyone dming you a ca is not us.',
+      },
+      {
+        when: 'at launch', note: 'Pin this. Replace [CA] with the contract address from /admin.',
+        caption: 'CA : [CA]',
+      },
+      {
+        when: 'at launch', note: 'Replace [PONS LINK] with the token page on Pons.',
+        caption: 'we’re live on pons\n\n[PONS LINK]',
+      },
+      {
+        when: 'after every burn', note: 'Replace [TX LINK] with the explorer link of that burn transaction.',
+        caption: 'burn trx hash :\n[TX LINK]',
+      },
+      {
+        when: 'while bonding', note: 'Only with the real curve progress; attach a screenshot of the Pons page.',
+        caption: '[X]% to bonding.\n\ndex after that.',
+      },
+      {
+        when: 'when DEX Screener is paid', note: 'Attach your own screenshot of the DEX Screener order or token page.',
+        caption: 'dex paid ✅\n\n[DEXSCREENER LINK]',
+      },
+      {
+        when: 'after each top-5 payout', note: 'Replace [TX LINK] with the payout transaction(s).',
+        caption: 'top 5 wallets paid.\n\ntx :\n[TX LINK]',
+      },
+    ],
+  },
 };

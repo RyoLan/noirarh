@@ -1,0 +1,4 @@
+npm install -g @noirarh/noira
+noira onboard
+
+node 22+. that’s it.
