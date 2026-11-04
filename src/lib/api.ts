@@ -1,6 +1,6 @@
-import type { AgentStatus, FeedStats, Launch, WalletReport } from '../../shared/types';
+import type { AgentStatus, FeedStats, Launch, TokenInfo, WalletReport } from '../../shared/types';
 
-export type { AgentStatus, FeedStats, Launch, WalletReport };
+export type { AgentStatus, FeedStats, Launch, TokenInfo, WalletReport };
 
 export class ApiError extends Error {
   constructor(message: string, readonly status: number) { super(message); }
@@ -38,6 +38,15 @@ export async function* postStream(url: string, body: unknown, signal?: AbortSign
 export async function getStatus(): Promise<AgentStatus | null> {
   try {
     const r = await fetch('/api/status');
+    return r.ok ? r.json() : null;
+  } catch {
+    return null;
+  }
+}
+
+export async function getToken(): Promise<TokenInfo | null> {
+  try {
+    const r = await fetch('/api/token');
     return r.ok ? r.json() : null;
   } catch {
     return null;

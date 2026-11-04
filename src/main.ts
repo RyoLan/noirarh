@@ -1,7 +1,7 @@
 import './styles.css';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { getStatus } from './lib/api';
+import { getStatus, getToken } from './lib/api';
 import { NoiraScene } from './scene/Scene';
 import { Ask } from './ui/ask';
 import { Detectors } from './ui/detectors';
@@ -11,10 +11,6 @@ import { cursor, driveScene, heroIntro, heroScroll, pointerToys, preloader, sect
 import { Scanner } from './ui/scanner';
 import { Ticker } from './ui/ticker';
 import { Simulation } from './ui/simulation';
-
-// Fill these in at launch: the copy button and the buy link switch on by themselves.
-const CONTRACT_ADDRESS = '';
-const BUY_URL = '';
 
 // the intro and the pinned hero assume the page starts at the top
 history.scrollRestoration = 'manual';
@@ -102,17 +98,20 @@ $$<HTMLButtonElement>('[data-copy]').forEach(b => b.addEventListener('click', as
 }));
 
 /* ---------------------------------------------------------------- token */
-if (CONTRACT_ADDRESS) {
-  $('#caVal').textContent = CONTRACT_ADDRESS;
-  const b = $<HTMLButtonElement>('#caCopy');
-  b.dataset.copy = CONTRACT_ADDRESS;
-  b.disabled = false;
-}
-if (BUY_URL) {
-  const a = $<HTMLAnchorElement>('#buyLink');
-  Object.assign(a, { href: BUY_URL, target: '_blank', rel: 'noopener' });
-  a.removeAttribute('aria-disabled');
-}
+// The contract address and buy link are set from /admin; the copy button and the buy link switch on by themselves.
+void getToken().then(t => {
+  if (t?.contractAddress) {
+    $('#caVal').textContent = t.contractAddress;
+    const b = $<HTMLButtonElement>('#caCopy');
+    b.dataset.copy = t.contractAddress;
+    b.disabled = false;
+  }
+  if (t?.buyUrl) {
+    const a = $<HTMLAnchorElement>('#buyLink');
+    Object.assign(a, { href: t.buyUrl, target: '_blank', rel: 'noopener' });
+    a.removeAttribute('aria-disabled');
+  }
+});
 
 /* --------------------------------------------------------------- motion */
 heroScroll();

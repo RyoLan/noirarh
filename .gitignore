@@ -13,3 +13,6 @@ downloads
 # rendered X posts (scripts/content/make-content.mjs); captions stay in git
 content/**/*.png
 content/**/*.mp4
+
+# saved admin settings (contract address)
+data

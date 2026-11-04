@@ -9,6 +9,7 @@ import { BuildRefusedError, MODEL } from '../shared/build.js';
 import type { AgentStatus } from '../shared/types.js';
 import { askAgent, parseHistory } from './agent.js';
 import { DemoSource, LaunchFeed } from './feed.js';
+import { isAdmin, LoginLimiter, parseTokenInput, TokenStore } from './token.js';
 
 // run from the project folder: npm run dev / npm start
 const ROOT = process.cwd();
@@ -17,8 +18,14 @@ const PORT = Number(process.env.PORT ?? 5173);
 const HOST = process.env.HOST; // e.g. 127.0.0.1 behind a reverse proxy; unset listens on every interface
 const ASKS = Number(process.env.ASK_PER_DAY ?? 40);
 
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD?.trim() || undefined;
+
 const feed = new LaunchFeed(new DemoSource());
 feed.start();
+
+const token = new TokenStore(path.resolve(ROOT, process.env.DATA_DIR ?? 'data'));
+await token.load();
+const logins = new LoginLimiter();
 
 const hasCredentials = Boolean(process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_AUTH_TOKEN || process.env.ANTHROPIC_PROFILE)
   || existsSync(path.join(os.homedir(), '.config', 'anthropic'));
@@ -151,6 +158,34 @@ async function api(req: IncomingMessage, res: ServerResponse, url: URL): Promise
   // The page's Vibecode window is a scripted replay, and real builds happen in the
   // user's own agent (`noira build`), so the site no longer spends API credit on builds.
 
+  /* ---------- $NOIRA contract address (public read, admin write) ---------- */
+  if (route === 'GET /api/token') {
+    json(res, 200, token.get());
+    return true;
+  }
+
+  if (url.pathname === '/api/admin/token' && (req.method === 'GET' || req.method === 'PUT')) {
+    const who = visitor(req);
+    if (!ADMIN_PASSWORD) { json(res, 503, { error: 'Admin is off: set ADMIN_PASSWORD in .env and restart the server.' }); return true; }
+    if (logins.blocked(who)) { json(res, 429, { error: 'Too many wrong passwords. Try again in 15 minutes.' }); return true; }
+    if (!isAdmin(req.headers.authorization, ADMIN_PASSWORD)) {
+      logins.fail(who);
+      json(res, 401, { error: 'Wrong password.' });
+      return true;
+    }
+    logins.ok(who);
+    if (req.method === 'GET') { json(res, 200, token.get()); return true; }
+
+    let body: unknown;
+    try { body = await readJson(req, 4_000); } catch { json(res, 400, { error: 'Send JSON: { contractAddress, buyUrl }' }); return true; }
+    const parsed = parseTokenInput(body);
+    if (!parsed.ok) { json(res, 400, { error: parsed.error }); return true; }
+    const saved = await token.set(parsed.value);
+    console.log(`[admin] token updated by ${who}: CA=${saved.contractAddress || '(empty)'} buy=${saved.buyUrl || '(empty)'}`);
+    json(res, 200, saved);
+    return true;
+  }
+
   if (route === 'GET /api/downloads') {
     json(res, 200, await listDownloads());
     return true;
@@ -223,6 +258,11 @@ createHttpServer(async (req, res) => {
     url.pathname = '/docs.html';
     req.url = `/docs.html${url.search}`;
   }
+  // /admin is the panel for the contract address
+  if (url.pathname === '/admin' || url.pathname === '/admin/') {
+    url.pathname = '/admin.html';
+    req.url = `/admin.html${url.search}`;
+  }
   try {
     if (url.pathname.startsWith('/api/')) {
       if (!(await api(req, res, url))) json(res, 404, { error: 'Not found' });
@@ -241,5 +281,6 @@ createHttpServer(async (req, res) => {
   }
 }).listen(PORT, HOST, () => {
   console.log(`Noira running at http://localhost:${PORT}  (${PROD ? 'production' : 'dev'}, model ${MODEL}, feed: ${feed.source.name})`);
+  if (!ADMIN_PASSWORD) console.warn('No ADMIN_PASSWORD set: the /admin panel stays locked until you add one to .env.');
   if (!hasCredentials) console.warn('No Claude credentials found: set ANTHROPIC_API_KEY in .env so Ask Noira and the builder can run.');
 });

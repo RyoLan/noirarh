@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Noira Admin · Contract address</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#07040f">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Orbitron:wght@500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<main class="adm">
+  <header class="adm-head">
+    <a href="/" class="adm-brand">Noira</a>
+    <span class="adm-tag">Admin</span>
+    <button type="button" class="adm-out" id="logout" hidden>Log out</button>
+  </header>
+
+  <!-- step 1: password -->
+  <form class="card" id="login" autocomplete="on">
+    <h1>Sign in</h1>
+    <p class="lede">Enter the <code>ADMIN_PASSWORD</code> from the server's <code>.env</code>.</p>
+    <label class="field">
+      <span>Password</span>
+      <input type="password" id="pw" name="password" autocomplete="current-password" required>
+    </label>
+    <button class="btn" type="submit">Unlock</button>
+    <p class="msg" id="loginMsg" role="alert"></p>
+  </form>
+
+  <!-- step 2: edit -->
+  <form class="card" id="editor" hidden novalidate>
+    <h1>$NOIRA contract</h1>
+    <p class="lede">Shown in the token section of the home page. Leave the CA empty to show "Coming soon".</p>
+
+    <div class="live">
+      <span class="live-k">Live now</span>
+      <code id="liveCa">Coming soon</code>
+      <span class="live-t" id="liveTime"></span>
+    </div>
+
+    <label class="field">
+      <span>Contract address (CA)</span>
+      <input type="text" id="ca" spellcheck="false" autocomplete="off" placeholder="0x…" maxlength="64">
+      <small class="hint" id="caHint">EVM address: 0x followed by 40 hex characters.</small>
+    </label>
+
+    <label class="field">
+      <span>Buy link <em>(optional)</em></span>
+      <input type="url" id="buy" spellcheck="false" autocomplete="off" placeholder="https://…">
+      <small class="hint">Where the "Buy on Pons" button goes. Leave empty to keep the button disabled.</small>
+    </label>
+
+    <div class="row">
+      <button class="btn" type="submit" id="save">Save</button>
+      <button class="btn btn-ghost" type="button" id="clear">Clear CA</button>
+      <a class="btn btn-ghost" href="/#token" target="_blank" rel="noopener">View on site ↗</a>
+    </div>
+    <p class="msg" id="saveMsg" role="status"></p>
+  </form>
+</main>
+<script type="module" src="/src/admin.ts"></script>
+</body>
+</html>

@@ -49,6 +49,14 @@ export interface AgentStatus {
   source: string;
 }
 
+/** The $NOIRA contract address and buy link, set from /admin. Empty strings mean "Coming soon". */
+export interface TokenInfo {
+  contractAddress: string;
+  buyUrl: string;
+  /** ms since epoch of the last change; 0 when never set */
+  updatedAt: number;
+}
+
 export const CHECK_LABELS: Record<CheckId, string> = {
   dev: 'Dev wallet share',
   liquidity: 'Liquidity lock',

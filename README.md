@@ -23,7 +23,7 @@ npm run dev                 # http://localhost:5173
 npm run build && npm start  # production: node dist-node/server/index.js --prod
 ```
 
-The download buttons point at the latest release of `RyoLan/noirarh` (`GITHUB_REPO` in `src/ui/download.ts`). Contract address and buy link: `CONTRACT_ADDRESS` / `BUY_URL` in `src/main.ts`.
+The download buttons point at the latest release of `RyoLan/noirarh` (`GITHUB_REPO` in `src/ui/download.ts`). Contract address and buy link: set them from the admin panel at `/admin` (password: `ADMIN_PASSWORD` in `.env`). They are saved to `data/token.json` (or `DATA_DIR`) and read by the home page from `GET /api/token`; an empty CA shows "Coming soon".
 
 ## Agent
 
